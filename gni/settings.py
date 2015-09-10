@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gallery',
+    'gallery.apps.GalleryConfig',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,6 +68,11 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+    'gallery.contexts.appname',
+)
 
 WSGI_APPLICATION = 'gni.wsgi.application'
 
@@ -103,3 +108,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = '/media/'
+
+LOGIN_URL = '/gni/signin'

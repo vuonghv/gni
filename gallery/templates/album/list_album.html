@@ -1,0 +1,18 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+
+    {% if album_list %}
+    <ul>
+        {% for album in album_list %}
+        <li>
+            <a href="">Album {{ album.title }}</a>
+            <em>Date created: {{ album.time_created }}</em>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>You have NO albums.</p>
+    {% endif %}
+
+{% endblock %}

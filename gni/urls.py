@@ -15,8 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.apps import apps as django_apps
 
 urlpatterns = [
-    url(r'^gni/', include('gallery.urls', namespace='gallery')),
+    url(r'^gni/',
+        include('gallery.urls',
+                namespace=django_apps.get_app_config('gallery').name,
+                app_name=django_apps.get_app_config('gallery').name
+        )
+    ),
+
     url(r'^admin/', include(admin.site.urls)),
 ]

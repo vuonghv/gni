@@ -1,0 +1,10 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+    <form id="form-signin" method="POST" action="{% url 'gallery:signin' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign In" />
+    </form>
+
+{% endblock %}

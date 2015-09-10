@@ -11,11 +11,11 @@ class Image(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateTimeField(auto_now=True)
 
-    album = models.ForeignKey(Album)
+    album = models.ForeignKey(Album, related_name='images')
 
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, related_name='images')
 
-    users_like = models.ManyToManyField(User)
+    users_like = models.ManyToManyField(User, related_name='liked_images')
 
     def __str__(self):
         return self.title

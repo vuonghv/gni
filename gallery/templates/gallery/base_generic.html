@@ -1,32 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        {% block staticfiles %}
-        <link rel="stylesheet" href="style.css" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="GNI Website">
+        <meta name="author" content="vuonghv">
+        <title>{% block title %}OMG! GNI{% endblock %}</title>
+
+        {% load staticfiles %}
+        {% block static_files %}
+        <link rel="stylesheet" type="text/css" href="{% static 'gallery/bootstrap/css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'gallery/bootstrap/css/cover.css' %}" />
+        <script src=""></script>
         {% endblock %}
-        <title>{% block title %}OMG! GNI is Not Instagram{% endblock %}</title>
     </head>
     
     <body>
-        <div id="header">
-            {% block header %}
-            {% endblock %}
-        </div>
+        <div class="site-wrapper">
+            <div class="site-wrapper-inner">
+                <div class="cover-container">
+                    <div class="masthead clearfix">
+                        <div class="inner">
+                            <h3 class="masthead-brand">GNI Project</h3>
+                            <nav>
+                                <ul class="nav masthead-nav">
+                                    <li class="active"><a href="{% url 'gallery:index' %}">Home</a></li>
+                                    {% if user.is_authenticated %}
+                                        <li><a href="{% url 'gallery:profile' user.id %}">Profile</a></li>
+                                        <li><a href="#">Albums</a></li>
+                                        <li><a href="{% url 'gallery:signout' %}">Sign out</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'gallery:signin' %}">Sign In</a></li>
+                                        <li><a href="{% url 'gallery:signup' %}">Sign up</a></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
 
-        <div id="sidebar">
-            {% block sidebar %}
-            {% endblock %}
-        </div>
+                    <div class="inner cover">
+                        <h1 class="cover-heading">GNI is Not Instagram</h1>
+                        <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+                        <p class="lead">
+                            <a href="#" class="btn btn-lg btn-default">WTF</a>
+                        </p>
+                    </div>
 
-        <div id="content">
-            {% block content %}
-            {% endblock %}
+                    <div class="mastfoot">
+                        <div class="inner">
+                            <p>GNI is Not Instagram, by <a href="https://twitter.com/vuongmax">@vuongmax</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div id="footer">
-            {% block footer %}
-            {% endblock %}
-        </div>
-
     </body>
 </html>
