@@ -1,0 +1,9 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+<form method="POST" action="{% url 'gallery:delete-album' album.id %}">
+    {% csrf_token %}
+    <p class="text-danger">Are you sure want to DELETE [{{ album }}]?</p>
+    <input type="submit" value="Delete" class="btn btn-danger btn-lg" />
+</form>
+{% endblock %}

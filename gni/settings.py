@@ -107,6 +107,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'gallery/media/')
+
+MEDIA_URL = '/media/'
 
 LOGIN_URL = '/gni/signin'
+
+AVATAR_DIR_NAME = 'avatar'
+
+TIMELINE_DIR_NAME = 'timeline'

@@ -1,59 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="GNI Website">
-        <meta name="author" content="vuonghv">
-        <title>{% block title %}OMG! GNI{% endblock %}</title>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-        {% load staticfiles %}
-        {% block static_files %}
-        <link rel="stylesheet" type="text/css" href="{% static 'gallery/bootstrap/css/bootstrap.min.css' %}" />
-        <link rel="stylesheet" type="text/css" href="{% static 'gallery/bootstrap/css/cover.css' %}" />
-        <script src=""></script>
-        {% endblock %}
-    </head>
-    
-    <body>
-        <div class="site-wrapper">
-            <div class="site-wrapper-inner">
-                <div class="cover-container">
-                    <div class="masthead clearfix">
-                        <div class="inner">
-                            <h3 class="masthead-brand">GNI Project</h3>
-                            <nav>
-                                <ul class="nav masthead-nav">
-                                    <li class="active"><a href="{% url 'gallery:index' %}">Home</a></li>
-                                    {% if user.is_authenticated %}
-                                        <li><a href="{% url 'gallery:profile' user.id %}">Profile</a></li>
-                                        <li><a href="#">Albums</a></li>
-                                        <li><a href="{% url 'gallery:signout' %}">Sign out</a></li>
-                                    {% else %}
-                                        <li><a href="{% url 'gallery:signin' %}">Sign In</a></li>
-                                        <li><a href="{% url 'gallery:signup' %}">Sign up</a></li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
+    <title>{% block title %}OMG! GNI{% endblock %}</title>
 
-                    <div class="inner cover">
-                        <h1 class="cover-heading">GNI is Not Instagram</h1>
-                        <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
-                        <p class="lead">
-                            <a href="#" class="btn btn-lg btn-default">WTF</a>
-                        </p>
-                    </div>
+    {% load staticfiles %}
+    {% block static_files %}
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'gallery/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
-                    <div class="mastfoot">
-                        <div class="inner">
-                            <p>GNI is Not Instagram, by <a href="https://twitter.com/vuongmax">@vuongmax</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'gallery/bootstrap/css/jumbotron.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--<script src="../../assets/js/ie-emulation-modes-warning.js"></script>-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {% endblock %}
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'gallery:index' %}">GNI! Sharing photos</a>
         </div>
-    </body>
+        {% block header %}
+        {% if user.is_authenticated %}
+        <!-- TODO -->
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'gallery:index' %}" >Home</a></li>
+              <li><a href="{% url 'gallery:list-albums' %}" >Albums</a></li>
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.get_full_name }}<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                      <li><a href="{% url 'gallery:profile' user.id %}">Profile</a></li>
+                      <li><a href="#">Setting security</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="{% url 'gallery:signout' %}">Sign out</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Separated link</a></li>
+                  </ul>
+              </li><!-- .dropdown -->
+          </ul>
+          <div class="navbar-form navbar-right">
+              <a href="#" class="btn btn-info">Post photo</a>
+          </div>
+        </div><!--/.navbar-collapse -->
+        {% else %}
+        <div id="navbar" class="navbar-collapse collapse">
+          <div class="navbar-form navbar-right">
+              <a href="{% url 'gallery:signup' %}" class="btn btn-danger">Sign up</a>
+          </div>
+          <form class="navbar-form navbar-right" method="POST" action="{% url 'gallery:signin' %}">
+              {% csrf_token %}
+            <div class="form-group">
+              <input name="username" type="text" placeholder="Username or Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input name="password" type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+          
+        </div><!--/.navbar-collapse -->
+        {% endif %}
+        {% endblock %}
+      </div><!-- .container -->
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <!--
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large.</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+      </div>
+    </div>
+    -->
+
+    <div class="container">
+        {% block content %}
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus com </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus com </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestnamet risus.</p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+      </div>
+      {% endblock %}
+
+      <hr>
+
+      <footer>
+          <p>&copy; GNI is Not Instagram 2015, by <a href="https://twitter.com/vuongmax/">@vuongmax</a></p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{% static 'gallery/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
+  </body>
 </html>

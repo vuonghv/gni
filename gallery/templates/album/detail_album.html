@@ -1,0 +1,17 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+    {% if album %}
+        <p>Album: {{ album.id }}</p>
+        <p>Title: {{ album.title }}</p>
+        <p>Description: {{ album.description }}</p>
+        <p>time_created: {{ album.time_created }}</p>
+        <p>time_updated: {{ album.time_updated }}</p>
+        <p>
+        <a href="{% url 'gallery:update-album' album.id %}" class="btn btn-primary btn-lg">Update</a>
+        <a href="{% url 'gallery:delete-album' album.id %}" class="btn btn-danger btn-lg">Delete album</a>
+        </p>
+    {% else %}
+        <p class="text-warning">No such albums</p>
+    {% endif %}
+{% endblock %}

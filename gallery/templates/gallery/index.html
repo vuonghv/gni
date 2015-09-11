@@ -1,9 +1,6 @@
 {% extends 'gallery/base_generic.html' %}
 
 {% block content %}
-    <div class="container">
-        <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
-    </div>
 
     {% if album_list %}
     <ul>
