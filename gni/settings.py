@@ -70,15 +70,6 @@ TEMPLATES = [
 
 ]
 
-<<<<<<< HEAD
-=======
-"""
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-    'gallery.contexts.appname',
-)
-"""
->>>>>>> 914543cbdfc88e614c883daaa93d53b583b93cbc
 
 WSGI_APPLICATION = 'gni.wsgi.application'
 
