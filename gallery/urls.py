@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import albums, users, gallery
+from .views import albums, users, gallery, images
 
 
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
     url(r'^albums/(?P<pk>[0-9]+)/$', albums.DetailAlbum.as_view(), name='detail-album'),
     url(r'^albums/(?P<pk>[0-9]+)/edit/$', albums.UpdateAlbum.as_view(), name='update-album'),
     url(r'^albums/(?P<pk>[0-9]+)/delete/$', albums.DeleteAlbum.as_view(), name='delete-album'),
+
+    url(r'^images/new/$', images.CreateImage.as_view(), name='create-image'),
 ]
