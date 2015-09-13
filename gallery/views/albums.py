@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.http import HttpResponseRedirect
 
@@ -98,7 +99,21 @@ class DeleteAlbum(DeleteView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    def can_delete(self, request):
+        """
+        Check if request.user can delete the album
+        """
+        self.object = self.get_object()
+        return self.object.owner.pk == request.user.pk
+
     def delete(self, request, *args, **kwargs):
+        """
+        Override the method of baseclass DeletionMixin
+        """
+        if not self.can_delete(request):
+            raise PermissionDenied(
+                    'You do NOT have permissions to delete the album')
+
         self.object = self.get_object()
         album_dir = os.path.join(settings.MEDIA_ROOT,
                                 str(request.user.id),
