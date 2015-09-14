@@ -4,6 +4,7 @@ import hashlib
 
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -12,6 +13,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files import uploadedfile
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 
 from gallery.models.image import Image
 
@@ -61,7 +63,27 @@ class DetailImage(DetailView):
         context['users_like'] = self.object.users_like.all()
         if self.request.user in context['users_like']:
             context['liked'] = True
+            context['number_others_like'] = context['users_like'].count() - 1
         else:
             context['liked'] = False
 
         return context
+
+
+@require_http_methods(['GET', 'POST',])
+@login_required
+def like_image(request, pk):
+    image = get_object_or_404(Image, pk=pk)
+
+    image.users_like.add(request.user)
+
+    return HttpResponseRedirect(reverse('gallery:detail-image',
+                                        kwargs={'pk': pk}))
+
+@require_http_methods(['GET', 'POST',])
+@login_required
+def unlike_image(request, pk):
+    image = get_object_or_404(Image, pk=pk)
+    image.users_like.remove(request.user)
+    return HttpResponseRedirect(reverse('gallery:detail-image',
+                                        kwargs={'pk': pk}))
