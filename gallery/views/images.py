@@ -33,6 +33,11 @@ class CreateImage(CreateView):
                         kwargs={'pk': self.object.album.id})
 
     def form_valid(self, form):
+        # Should I put following checking step in another method?
+        if form.instance.album not in self.request.user.albums.all():
+            raise PermissionDenied('You have no permissions to \
+                    post an image on album %s' % str(form.instance.album))
+
         form.instance.owner = self.request.user
 
         name, ext = os.path.splitext(form.instance.img.name)
@@ -42,11 +47,6 @@ class CreateImage(CreateView):
 
         filename = sha512.hexdigest()
         form.instance.img.name = filename + ext
-
-        #ploaded_file = self.request.FILES['img']
-        #ith open(form.instance.img.path, 'wb+') as disk_file:
-        #   for chunk in uploaded_file.chunks():
-        #       disk_file.write(chunk)
 
         self.object = form.save()
 

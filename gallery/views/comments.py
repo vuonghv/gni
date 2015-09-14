@@ -22,7 +22,6 @@ from gallery.forms.comments import CommentImageForm
 class CreateComment(CreateView):
     model = Comment
     form_class = CommentImageForm
-    #template_name = 'comment/create_comment.html'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
