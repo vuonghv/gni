@@ -24,10 +24,9 @@
 
 <br/></br>
 <p>{{ user }}:</p>
-<form method="POST" action="#">
+<form method="POST" action="{% url 'gallery:create-comment' %}">
     {% csrf_token %}
-    <input type="hidden" name="image" value="{{ image.id }}" />
-    <input type="text" name="content" value="" />
+    {{ comment_form.as_p }}
     <input type="submit" value="Post comment" />
 </form>
 

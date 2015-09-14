@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import albums, users, gallery, images
+from .views import albums, users, gallery, images, comments
 
 
 urlpatterns = [
@@ -21,5 +21,7 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/$', images.DetailImage.as_view(), name='detail-image'),
     url(r'^images/(?P<pk>[0-9]+)/like/$', images.like_image, name='like-image'),
     url(r'^images/(?P<pk>[0-9]+)/unlike/$', images.unlike_image, name='unlike-image'),
+
+    url(r'^comments/new/$', comments.CreateComment.as_view(), name='create-comment'),
 
 ]

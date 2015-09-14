@@ -16,6 +16,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 
 from gallery.models.image import Image
+from gallery.forms.comments import CommentImageForm
 
 
 class CreateImage(CreateView):
@@ -66,6 +67,9 @@ class DetailImage(DetailView):
             context['number_others_like'] = context['users_like'].count() - 1
         else:
             context['liked'] = False
+
+        comment_form = CommentImageForm(initial={'image': self.object})
+        context['comment_form'] = comment_form
 
         return context
 
