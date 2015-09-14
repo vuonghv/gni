@@ -18,7 +18,7 @@
             <p>IMAGE: {{ image.title }}, ID: {{ image.id }}</p>
             <p>TIME_CREATED: {{ image.time_created }}</p>
             <p>TIME_UPDATED: {{ image.time_updated }}</p>
-            <p><img height="300px" width="300px" src="{{ image.img.url }}" /></p>
+            <p><a href="{% url 'gallery:detail-image' image.id %}"><img height="300px" width="300px" src="{{ image.img.url }}" /></a></p>
         </div>
         <br/><br/>
         {% endfor %}

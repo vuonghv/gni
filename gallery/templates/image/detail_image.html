@@ -1,0 +1,34 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+
+<p>Title: {{ image.title }}</p>
+<p>Description: {{ image.description }}</p>
+<img height="300px" width="200px" src="{{ image.img.url }}" />
+<p>
+    {% if liked %}
+    <p><a href="#">Unlike</a></p>
+    You and {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
+    {% else %}
+    <p><a href="#">Like</a></p>
+    {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
+    {% endif %}
+        
+</p>
+<br />
+<p>Comments:</p>
+{% for c in comments %}
+<p>{{ c.owner }}: {{ c.content }}</p>
+<p>time: {{ c.time_updated }}</p>
+{% endfor %}
+
+<br/></br>
+<p>{{ user }}:</p>
+<form method="POST" action="#">
+    {% csrf_token %}
+    <input type="hidden" name="image" value="{{ image.id }}" />
+    <input type="text" name="content" value="" />
+    <input type="submit" value="Post comment" />
+</form>
+
+{% endblock %}

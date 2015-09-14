@@ -48,3 +48,20 @@ class CreateImage(CreateView):
         self.object = form.save()
 
         return super().form_valid(form)
+
+
+class DetailImage(DetailView):
+    model = Image
+    context_object_name = 'image'
+    template_name = 'image/detail_image.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        context['users_like'] = self.object.users_like.all()
+        if self.request.user in context['users_like']:
+            context['liked'] = True
+        else:
+            context['liked'] = False
+
+        return context
