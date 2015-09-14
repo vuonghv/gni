@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^albums/(?P<pk>[0-9]+)/delete/$', albums.DeleteAlbum.as_view(), name='delete-album'),
 
     url(r'^images/new/$', images.CreateImage.as_view(), name='create-image'),
+
 ]

@@ -32,25 +32,18 @@ class CreateImage(CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
 
+        name, ext = os.path.splitext(form.instance.img.name)
         sha512 = hashlib.sha512()
         sha512.update(bytes(form.instance.img.name, encoding='utf-8'))
         sha512.update(bytes(str(timezone.now()), encoding='utf-8'))
 
         filename = sha512.hexdigest()
-        filename = '/'.join([str(self.request.user.id),
-                            str(form.instance.album.id),
-                            filename])
-        #file_path = os.path.join(settings.MEDIA_ROOT,
-        #                        str(self.request.user.id),
-        #                        str(form.instance.album.id),
-        #                        filename)
-        form.instance.img.name = filename
-        #form.instance.img.path = file_path
+        form.instance.img.name = filename + ext
 
-        uploaded_file = self.request.FILES['img']
-        with open(form.instance.img.path, 'wb+') as disk_file:
-            for chunk in uploaded_file.chunks():
-                disk_file.write(chunk)
+        #ploaded_file = self.request.FILES['img']
+        #ith open(form.instance.img.path, 'wb+') as disk_file:
+        #   for chunk in uploaded_file.chunks():
+        #       disk_file.write(chunk)
 
         self.object = form.save()
 
