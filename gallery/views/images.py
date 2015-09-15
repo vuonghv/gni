@@ -74,17 +74,15 @@ class DetailImage(DetailView):
         return context
 
 
-@require_http_methods(['GET', 'POST',])
+@require_http_methods(['POST',])
 @login_required
 def like_image(request, pk):
     image = get_object_or_404(Image, pk=pk)
-
     image.users_like.add(request.user)
-
     return HttpResponseRedirect(reverse('gallery:detail-image',
                                         kwargs={'pk': pk}))
 
-@require_http_methods(['GET', 'POST',])
+@require_http_methods(['POST',])
 @login_required
 def unlike_image(request, pk):
     image = get_object_or_404(Image, pk=pk)

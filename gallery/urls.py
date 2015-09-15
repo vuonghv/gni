@@ -9,7 +9,8 @@ urlpatterns = [
     url(r'^signup/$', users.SignupUser.as_view(), name='signup'),
     url(r'^signin/$', users.signin, name='signin'),
     url(r'^signout/$', users.signout, name='signout'),
-    url(r'^users/(?P<pk>[0-9]+)/$', users.UpdateProfileUser.as_view(), name='profile'),
+    url(r'^users/(?P<pk>[0-9]+)/$', users.DetailUser.as_view(), name='detail-user'),
+    url(r'^users/(?P<pk>[0-9]+)/edit$', users.UpdateProfileUser.as_view(), name='profile'),
 
     url(r'^albums/$', albums.ListAlbum.as_view(), name='list-albums'),
     url(r'^albums/new/$', albums.CreateAlbum.as_view(), name='create-album'),

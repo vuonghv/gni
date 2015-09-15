@@ -54,12 +54,10 @@
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.get_full_name }}<span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                      <li><a href="{% url 'gallery:profile' user.id %}">Profile</a></li>
+                      <li><a href="{% url 'gallery:detail-user' user.id %}">Profile</a></li>
                       <li><a href="#">Setting security</a></li>
                       <li role="separator" class="divider"></li>
                       <li><a href="{% url 'gallery:signout' %}">Sign out</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">Separated link</a></li>
                   </ul>
               </li><!-- .dropdown -->
           </ul>

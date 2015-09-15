@@ -31,6 +31,13 @@ class CreateComment(CreateView):
         return reverse_lazy('gallery:detail-image',
                             kwargs={'pk': self.object.image.id})
 
+    def get_failure_url(self, form):
+        return reverse_lazy('gallery:detail-image',
+                            kwargs={'pk': form.instance.image.id})
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return HttpResponseRedirect(self.get_failure_url(form)) 

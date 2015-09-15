@@ -7,19 +7,34 @@
 <img height="200px" width="400px" src="{{ image.img.url }}" />
 <p>
     {% if liked %}
-    <p><a href="{% url 'gallery:unlike-image' image.id %}">Unlike</a></p>
-    <a href="{% url 'gallery:profile' user.id %}">You</a> and {{ number_others_like }} others like this, Date posted: {{ image.time_created }}
+
+        <p>
+            <form id="unlike-image-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="document.getElementById('unlike-image-form').submit();">Unlike</a>
+        </p>
+        <a href="{% url 'gallery:detail-user' user.id %}">You</a> and {{ number_others_like }} others like this, Date posted: {{ image.time_created }}
+
     {% else %}
-    <p><a href="{% url 'gallery:like-image' image.id %}">Like</a></p>
-    {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
+
+        <p>
+            <form id="like-image-form" method="POST" action="{% url 'gallery:like-image' image.id %}">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="document.getElementById('like-image-form').submit();">Like</a>
+        </p>
+        {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
+
     {% endif %}
         
 </p>
 <br />
 <p>Comments:</p>
 {% for c in comments %}
-<p>{{ c.owner }}: {{ c.content }}</p>
-<p>time: {{ c.time_updated }}</p>
+    <p><a href="{% url 'gallery:detail-user' user.id %}">{{ c.owner }}</a>: {{ c.content }}</p>
+    <p>time: {{ c.time_updated }}</p>
+    <br/>
 {% endfor %}
 
 <br/></br>

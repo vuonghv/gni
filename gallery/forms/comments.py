@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Textarea, TextInput, FileInput
+from django.forms import ModelForm, Textarea, TextInput
 
 from gallery.models import Comment
 
@@ -9,6 +9,6 @@ class CommentImageForm(ModelForm):
         model = Comment
         fields = ('content', 'image',)
         widgets = {
-                'content': Textarea(attrs={'cols': 40, 'rows': 4}),
+                'content': Textarea(attrs={'cols': 30, 'rows': 3}),
                 'image': TextInput(attrs={'type': 'hidden'}),
         }

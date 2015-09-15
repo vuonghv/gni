@@ -8,8 +8,10 @@ from django.contrib.auth.forms import (
         AuthenticationForm,
         UserChangeForm,
 )
+from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
@@ -75,9 +77,14 @@ def signout(request):
     return HttpResponseRedirect(reverse('gallery:index'))
 
 
+class DetailUser(DetailView):
+    model = User
+    context_object_name = 'user_obj'
+    template_name = 'user/detail_user.html'
+
+
 class UpdateProfileUser(UpdateView):
     model = User
-    #form_class = UserChangeForm
     fields = ['first_name', 'last_name', 'email']
     template_name = 'user/update_profile.html'
 
@@ -86,4 +93,11 @@ class UpdateProfileUser(UpdateView):
         return super().dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('gallery:index')
+        return reverse_lazy('gallery:detail-user',
+                            kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        if form.instance.pk != self.request.user.pk:
+            raise PermissionDenied(
+                    'You have no permissions to edit user %s' % form.instance)
+        return super().form_valid(form)
