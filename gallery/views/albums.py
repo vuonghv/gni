@@ -19,12 +19,10 @@ class ListAlbum(ListView):
     context_object_name = 'album_list'
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated():
-            queryset = user.albums.order_by('-time_created')
-        else:
-            queryset = self.model.objects.order_by('-time_created')
-
+        """
+        Retrieve all albums order by time_created
+        """
+        queryset = self.model.objects.order_by('-time_created')
         return queryset
 
 

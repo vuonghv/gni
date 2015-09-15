@@ -10,7 +10,7 @@
     <p>Last login: <em>{{ user_obj.last_login }}</em></p>
     <br/>
 
-    {% if user_obj.pk == request.user.pk %}
+    {% if user_obj == request.user %}
         <a href="{% url 'gallery:profile' user_obj.id %}" class="btn btn-success">Update profile</a>
     {% endif %}
 {% endblock %}

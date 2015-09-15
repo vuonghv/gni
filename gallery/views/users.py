@@ -87,6 +87,7 @@ class UpdateProfileUser(UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'email']
     template_name = 'user/update_profile.html'
+    context_object_name = 'user_obj'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -101,3 +102,17 @@ class UpdateProfileUser(UpdateView):
             raise PermissionDenied(
                     'You have no permissions to edit user %s' % form.instance)
         return super().form_valid(form)
+
+
+class UserListAlbum(DetailView):
+    model = User
+    template_name = 'user/list_album.html'
+
+    # Need to set context_object_name to avoid conficting 'user' object
+    # in 'gallery/base_generic.html'.
+    context_object_name = 'user_obj'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_albums'] = self.object.albums.all()
+        return context

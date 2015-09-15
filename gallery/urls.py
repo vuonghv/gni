@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^signout/$', users.signout, name='signout'),
     url(r'^users/(?P<pk>[0-9]+)/$', users.DetailUser.as_view(), name='detail-user'),
     url(r'^users/(?P<pk>[0-9]+)/edit$', users.UpdateProfileUser.as_view(), name='profile'),
+    url(r'^users/(?P<pk>[0-9]+)/albums/$', users.UserListAlbum.as_view(), name='user-list-albums'),
 
     url(r'^albums/$', albums.ListAlbum.as_view(), name='list-albums'),
     url(r'^albums/new/$', albums.CreateAlbum.as_view(), name='create-album'),

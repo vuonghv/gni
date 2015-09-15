@@ -1,0 +1,16 @@
+{% extends 'gallery/base_generic.html' %}
+
+{% block content %}
+    {% if user_albums %}
+        <ul>
+            {% for album in user_albums %}
+            <li>
+                <a href="{% url 'gallery:detail-album' album.id %}">{{ album.title }}</a>
+                <em>Date created: {{ album.time_created }}</em>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>YOU HAVE NO ALBUMS.</p>
+    {% endif %}
+{% endblock %}

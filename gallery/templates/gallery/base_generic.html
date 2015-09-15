@@ -50,7 +50,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
               <li><a href="{% url 'gallery:index' %}" >Home</a></li>
-              <li><a href="{% url 'gallery:list-albums' %}" >Albums</a></li>
+              <li><a href="{% url 'gallery:user-list-albums' user.id %}" >Albums</a></li>
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.get_full_name }}<span class="caret"></span></a>
                   <ul class="dropdown-menu">

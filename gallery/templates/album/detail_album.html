@@ -9,8 +9,10 @@
         <p>time_created: {{ album.time_created }}</p>
         <p>time_updated: {{ album.time_updated }}</p>
         <p>
-        <a href="{% url 'gallery:update-album' album.id %}" class="btn btn-primary btn-lg">Update</a>
-        <a href="{% url 'gallery:delete-album' album.id %}" class="btn btn-danger btn-lg">Delete album</a>
+        {% if album.owner == user %}
+            <a href="{% url 'gallery:update-album' album.id %}" class="btn btn-primary btn-lg">Update</a>
+            <a href="{% url 'gallery:delete-album' album.id %}" class="btn btn-danger btn-lg">Delete album</a>
+        {% endif %}
         </p>
 
         {% for image in images %}
