@@ -2,7 +2,7 @@
 
 {% block content %}
     <p>USER: {{ user.username }}, ID: {{ user.id }}</p>
-    <form id="update-profile" method="POST" action="{% url 'gallery:profile' user.id %}">
+    <form id="update-profile" method="POST" action="{% url 'gallery:profile' user_obj.id %}">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Update" />

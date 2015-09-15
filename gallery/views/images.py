@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
 from django.core.files import uploadedfile
@@ -24,6 +24,7 @@ class CreateImage(CreateView):
     fields = ['title', 'description', 'img', 'album']
     template_name = 'image/create_image.html'
 
+    #@method_decorator(permission_required('gallery.add_image', raise_exception=True))
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)

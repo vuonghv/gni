@@ -9,20 +9,20 @@
     {% if liked %}
 
         <p>
-            <form id="unlike-image-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
+        <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
                 {% csrf_token %}
             </form>
-            <a href="#" onclick="document.getElementById('unlike-image-form').submit();">Unlike</a>
+            <a href="#" onclick="document.getElementById('unlike-image-{{ image.id }}-form').submit();">Unlike</a>
         </p>
         <a href="{% url 'gallery:detail-user' user.id %}">You</a> and {{ number_others_like }} others like this, Date posted: {{ image.time_created }}
 
     {% else %}
 
         <p>
-            <form id="like-image-form" method="POST" action="{% url 'gallery:like-image' image.id %}">
+            <form style="display:none" id="like-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:like-image' image.id %}">
                 {% csrf_token %}
             </form>
-            <a href="#" onclick="document.getElementById('like-image-form').submit();">Like</a>
+            <a href="#" onclick="document.getElementById('like-image-{{ image.id }}-form').submit();">Like</a>
         </p>
         {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
 
@@ -32,8 +32,25 @@
 <br />
 <p>Comments:</p>
 {% for c in comments %}
-    <p><a href="{% url 'gallery:detail-user' user.id %}">{{ c.owner }}</a>: {{ c.content }}</p>
-    <p>time: {{ c.time_updated }}</p>
+    <p><a href="{% url 'gallery:detail-user' c.owner.id %}">{{ c.owner }}</a>: {{ c.content }}</p>
+    <p><em>{{ c.users_like.count }} likes</em>, time: {{ c.time_updated }}</p>
+    <p>
+        {% if user in c.users_like.all %}
+
+        <form style="display:none" id="unlike-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:unlike-comment' c.id %}">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="document.getElementById('unlike-comment-{{ c.id }}-form').submit();">Unlike</a>
+
+        {% else %}
+
+            <form style="display:none" id="like-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:like-comment' c.id %}">
+                {% csrf_token %}
+            </form>
+            <a href="#" onclick="document.getElementById('like-comment-{{ c.id }}-form').submit();">Like</a>
+
+        {% endif %}
+    </p>
     <br/>
 {% endfor %}
 

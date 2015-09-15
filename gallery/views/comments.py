@@ -41,3 +41,20 @@ class CreateComment(CreateView):
 
     def form_invalid(self, form):
         return HttpResponseRedirect(self.get_failure_url(form)) 
+
+
+@require_http_methods(['POST',])
+@login_required
+def like_comment(request, pk):
+    cmt = get_object_or_404(Comment, pk=pk)
+    cmt.users_like.add(request.user)
+    return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': cmt.image.pk}))
+
+@require_http_methods(['POST',])
+@login_required
+def unlike_comment(request, pk):
+    cmt = get_object_or_404(Comment, pk=pk)
+    cmt.users_like.remove(request.user)
+    return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': cmt.image.pk}))
