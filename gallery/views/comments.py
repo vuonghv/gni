@@ -1,8 +1,5 @@
-import os
-import shutil
-import hashlib
-
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -12,7 +9,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
 from django.core.files import uploadedfile
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 
 from gallery.models.comment import Comment
@@ -43,18 +40,43 @@ class CreateComment(CreateView):
         return HttpResponseRedirect(self.get_failure_url(form)) 
 
 
-@require_http_methods(['POST',])
-@login_required
-def like_comment(request, pk):
-    cmt = get_object_or_404(Comment, pk=pk)
-    cmt.users_like.add(request.user)
-    return HttpResponseRedirect(reverse('gallery:detail-image',
-                                    kwargs={'pk': cmt.image.pk}))
+class LikeComment(SingleObjectMixin, View):
+    """
+    Record the current user's liking a comment.
+    """
+    model = Comment
 
-@require_http_methods(['POST',])
-@login_required
-def unlike_comment(request, pk):
-    cmt = get_object_or_404(Comment, pk=pk)
-    cmt.users_like.remove(request.user)
-    return HttpResponseRedirect(reverse('gallery:detail-image',
-                                    kwargs={'pk': cmt.image.pk}))
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(
+                    content=b'You have to sign in to like the comment.')
+
+        self.object = self.get_object()
+        self.object.users_like.add(request.user)
+
+        return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': self.object.image.pk}))
+
+    def put(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+
+class UnlikeComment(SingleObjectMixin, View):
+    """
+    Remove the current user's unliking a comment.
+    """
+    model = Comment
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(
+                    content=b'You have to sign in to unlike the comment.')
+
+        self.object = self.get_object()
+        self.object.users_like.remove(request.user)
+
+        return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': self.object.image.pk}))
+
+    def put(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)

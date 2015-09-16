@@ -21,11 +21,11 @@ urlpatterns = [
 
     url(r'^images/new/$', images.CreateImage.as_view(), name='create-image'),
     url(r'^images/(?P<pk>[0-9]+)/$', images.DetailImage.as_view(), name='detail-image'),
-    url(r'^images/(?P<pk>[0-9]+)/like/$', images.like_image, name='like-image'),
-    url(r'^images/(?P<pk>[0-9]+)/unlike/$', images.unlike_image, name='unlike-image'),
+    url(r'^images/(?P<pk>[0-9]+)/like/$', images.LikeImage.as_view(), name='like-image'),
+    url(r'^images/(?P<pk>[0-9]+)/unlike/$', images.UnlikeImage.as_view(), name='unlike-image'),
 
     url(r'^comments/image/$', comments.CreateComment.as_view(), name='create-comment'),
-    url(r'^comments/(?P<pk>[0-9]+)/like/$', comments.like_comment, name='like-comment'),
-    url(r'^comments/(?P<pk>[0-9]+)/unlike/$', comments.unlike_comment, name='unlike-comment'),
+    url(r'^comments/(?P<pk>[0-9]+)/like/$', comments.LikeComment.as_view(), name='like-comment'),
+    url(r'^comments/(?P<pk>[0-9]+)/unlike/$', comments.UnlikeComment.as_view(), name='unlike-comment'),
 
 ]

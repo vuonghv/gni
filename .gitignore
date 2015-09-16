@@ -59,3 +59,9 @@ target/
 
 # Vim swap files
 *.swp
+
+# ropeproject of python-mode
+.ropeproject
+db.sqlite3
+gallery/migrations/
+media/

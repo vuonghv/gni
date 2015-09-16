@@ -9,7 +9,7 @@
     {% if liked %}
 
         <p>
-        <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
+            <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
                 {% csrf_token %}
             </form>
             <a href="#" onclick="document.getElementById('unlike-image-{{ image.id }}-form').submit();">Unlike</a>

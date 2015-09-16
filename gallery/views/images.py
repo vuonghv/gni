@@ -2,7 +2,8 @@ import os
 import shutil
 import hashlib
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -12,7 +13,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
 from django.core.files import uploadedfile
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 
 from gallery.models.image import Image
@@ -75,18 +76,45 @@ class DetailImage(DetailView):
         return context
 
 
-@require_http_methods(['POST',])
-@login_required
-def like_image(request, pk):
-    image = get_object_or_404(Image, pk=pk)
-    image.users_like.add(request.user)
-    return HttpResponseRedirect(reverse('gallery:detail-image',
-                                        kwargs={'pk': pk}))
+class LikeImage(SingleObjectMixin, View):
+    """
+    Record the current user's liking an image.
+    """
+    model = Image
+    
+    def post(self, request, *args, **kwargs):
 
-@require_http_methods(['POST',])
-@login_required
-def unlike_image(request, pk):
-    image = get_object_or_404(Image, pk=pk)
-    image.users_like.remove(request.user)
-    return HttpResponseRedirect(reverse('gallery:detail-image',
-                                        kwargs={'pk': pk}))
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(
+                    content=b'You have to sign in to like the image')
+
+        self.object = self.get_object()
+        self.object.users_like.add(request.user)
+
+        return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': self.object.pk}))
+
+    def put(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+
+class UnlikeImage(SingleObjectMixin, View):
+    """
+    Remove the current user's liking an image.
+    """
+    model = Image
+
+    def post(self, request, *args, **kwargs):
+
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(
+                    content=b'You have to sign in to unlike the image.')
+
+        self.object = self.get_object()
+        self.object.users_like.remove(request.user)
+
+        return HttpResponseRedirect(reverse('gallery:detail-image',
+                                    kwargs={'pk': self.object.pk}))
+
+    def put(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
