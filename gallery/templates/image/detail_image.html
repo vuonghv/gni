@@ -9,7 +9,7 @@
     {% if liked %}
 
         <p>
-            <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.id %}">
+            <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.pk %}">
                 {% csrf_token %}
             </form>
             <a href="#" onclick="document.getElementById('unlike-image-{{ image.id }}-form').submit();">Unlike</a>
@@ -19,7 +19,7 @@
     {% else %}
 
         <p>
-            <form style="display:none" id="like-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:like-image' image.id %}">
+            <form style="display:none" id="like-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:like-image' image.pk %}">
                 {% csrf_token %}
             </form>
             <a href="#" onclick="document.getElementById('like-image-{{ image.id }}-form').submit();">Like</a>
@@ -56,9 +56,9 @@
 
 <br/></br>
 <p>{{ user }}:</p>
-<form method="POST" action="{% url 'gallery:create-comment' %}">
+<form method="POST" action="{% url 'gallery:detail-image' image.pk %}">
     {% csrf_token %}
-    {{ comment_form.as_p }}
+    {{ form.as_p }}
     <input type="submit" value="Post comment" />
 </form>
 

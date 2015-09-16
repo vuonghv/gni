@@ -16,30 +16,6 @@ from gallery.models.comment import Comment
 from gallery.forms.comments import CommentImageForm
 
 
-class CreateComment(CreateView):
-    model = Comment
-    form_class = CommentImageForm
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_success_url(self):
-        return reverse_lazy('gallery:detail-image',
-                            kwargs={'pk': self.object.image.id})
-
-    def get_failure_url(self, form):
-        return reverse_lazy('gallery:detail-image',
-                            kwargs={'pk': form.instance.image.id})
-
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        return HttpResponseRedirect(self.get_failure_url(form)) 
-
-
 class LikeComment(SingleObjectMixin, View):
     """
     Record the current user's liking a comment.

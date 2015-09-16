@@ -4,7 +4,7 @@ import hashlib
 
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormView
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -34,11 +34,16 @@ class CreateImage(CreateView):
         return reverse_lazy('gallery:detail-album',
                         kwargs={'pk': self.object.album.id})
 
+    def get_initial(self):
+        initial = super().get_initial()
+        return initial
+
     def form_valid(self, form):
         # Should I put following checking step in another method?
         if form.instance.album not in self.request.user.albums.all():
-            raise PermissionDenied('You have no permissions to \
-                    post an image on album %s' % str(form.instance.album))
+            return HttpResponseForbidden(
+                    content=b'You have no permissions to post an image \
+                            on album %s' % str(form.instance.album))
 
         form.instance.owner = self.request.user
 
@@ -55,25 +60,72 @@ class CreateImage(CreateView):
         return super().form_valid(form)
 
 
-class DetailImage(DetailView):
+class DisplayImage(DetailView):
     model = Image
-    context_object_name = 'image'
     template_name = 'image/detail_image.html'
+    context_object_name = 'image'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.all()
         context['users_like'] = self.object.users_like.all()
+
         if self.request.user in context['users_like']:
             context['liked'] = True
             context['number_others_like'] = context['users_like'].count() - 1
         else:
             context['liked'] = False
 
-        comment_form = CommentImageForm(initial={'image': self.object})
-        context['comment_form'] = comment_form
+        context['form'] = CommentImageForm()
+        return context
+
+
+class CommentImage(SingleObjectMixin, FormView):
+    model = Image
+    template_name = 'image/detail_image.html'
+    form_class = CommentImageForm
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(
+                    content=b'You have to sign in to comment.')
+
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.image = self.object
+        form.instance.owner = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('gallery:detail-image',
+                            kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        context['users_like'] = self.object.users_like.all()
+
+        if self.request.user in context['users_like']:
+            context['liked'] = True
+            context['number_others_like'] = context['users_like'].count() - 1
+        else:
+            context['liked'] = False
 
         return context
+
+
+class DetailImage(DetailView):
+
+    def get(self, request, *args, **kwargs):
+        view = DisplayImage.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = CommentImage.as_view()
+        return view(request, *args, **kwargs)
 
 
 class LikeImage(SingleObjectMixin, View):

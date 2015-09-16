@@ -1,6 +1,12 @@
 {% extends 'gallery/base_generic.html' %}
 
 {% block content %}
+    {% if user.is_authenticated %}
+        <div class="container">
+            <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+        </div>
+    {% endif %}
+
     {% if user_albums %}
         <ul>
             {% for album in user_albums %}
