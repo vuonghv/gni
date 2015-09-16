@@ -25,7 +25,6 @@ class CreateImage(CreateView):
     fields = ['title', 'description', 'img', 'album']
     template_name = 'image/create_image.html'
 
-    #@method_decorator(permission_required('gallery.add_image', raise_exception=True))
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
@@ -41,9 +40,10 @@ class CreateImage(CreateView):
     def form_valid(self, form):
         # Should I put following checking step in another method?
         if form.instance.album not in self.request.user.albums.all():
+            content = 'You have no permissions to post an image \
+                    on album {0}'.format(str(form.instance.album))
             return HttpResponseForbidden(
-                    content=b'You have no permissions to post an image \
-                            on album %s' % str(form.instance.album))
+                    content=bytes(content, encoding='utf-8'))
 
         form.instance.owner = self.request.user
 
