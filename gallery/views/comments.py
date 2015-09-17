@@ -1,6 +1,8 @@
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import (
+        CreateView, DeleteView, UpdateView, DeletionMixin
+)
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -56,3 +58,19 @@ class UnlikeComment(SingleObjectMixin, View):
 
     def put(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+
+class DeleteComment(SingleObjectMixin, DeletionMixin, View):
+    model = Comment
+    
+    def get_success_url(self):
+        return reverse_lazy('gallery:detail-image',
+                            kwargs={'pk': self.object.image.pk})
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.owner != request.user:
+            return HttpResponseForbidden(
+                    content=b'You can not delete the comment.')
+
+        return super().delete(request, *args, **kwargs)
