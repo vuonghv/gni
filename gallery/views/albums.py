@@ -113,14 +113,4 @@ class DeleteAlbum(DeleteView):
             raise PermissionDenied(
                     'You do NOT have permissions to delete the album')
 
-        self.object = self.get_object()
-        album_dir = os.path.join(settings.MEDIA_ROOT,
-                                str(request.user.id),
-                                str(self.object.id))
-        # TODO: need to delete Images database related with the album
-        try:
-            shutil.rmtree(album_dir)
-        except (Exception, OSError) as err:
-            print("Exception: %s" % err.strerror)
-
         return super().delete(request, *args, **kwargs)

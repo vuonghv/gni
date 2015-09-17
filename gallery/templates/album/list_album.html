@@ -2,7 +2,9 @@
 
 {% block content %}
     <div class="container">
-        <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+        {% endif %}
     </div>
 
     {% if album_list %}

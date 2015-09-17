@@ -4,6 +4,13 @@
 
 <p>Title: {{ image.title }}</p>
 <p>Description: {{ image.description }}</p>
+
+{% if image.owner == user %}
+    <p>
+        <a href="#">Edit</a>
+        <a href="{% url 'gallery:delete-image' image.pk %}">Delete</a>
+    </p>
+{% endif %}
 <img height="200px" width="400px" src="{{ image.img.url }}" />
 <p>
     {% if liked %}

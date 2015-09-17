@@ -1,17 +1,13 @@
 import os
-import shutil
 import hashlib
 
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormView
-from django.views.decorators.http import require_http_methods
+from django.views.generic.edit import CreateView, FormView, DeleteView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.core.exceptions import PermissionDenied
-from django.core.files import uploadedfile
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
@@ -126,6 +122,36 @@ class DetailImage(DetailView):
     def post(self, request, *args, **kwargs):
         view = CommentImage.as_view()
         return view(request, *args, **kwargs)
+    
+
+class DeleteImage(DeleteView):
+    model = Image
+    template_name = 'image/confirm_delete_image.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('gallery:detail-album',
+                            kwargs={'pk': self.object.album.pk})
+
+    def can_delete(self, request):
+        """
+        This method checks if request.user can delete the album.
+        """
+        self.object = self.get_object()
+        return self.object.owner == request.user
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Override the method of DeletionMixin baseclass
+        """
+        if not self.can_delete(request):
+            return HttpResponseForbidden(
+                    content=b'You have no permissions to delete the image.')
+
+        return super().delete(request, *args, **kwargs)
 
 
 class LikeImage(SingleObjectMixin, View):

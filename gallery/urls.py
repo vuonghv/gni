@@ -21,6 +21,7 @@ urlpatterns = [
 
     url(r'^images/new/$', images.CreateImage.as_view(), name='create-image'),
     url(r'^images/(?P<pk>[0-9]+)/$', images.DetailImage.as_view(), name='detail-image'),
+    url(r'^images/(?P<pk>[0-9]+)/delete/$', images.DeleteImage.as_view(), name='delete-image'),
     url(r'^images/(?P<pk>[0-9]+)/like/$', images.LikeImage.as_view(), name='like-image'),
     url(r'^images/(?P<pk>[0-9]+)/unlike/$', images.UnlikeImage.as_view(), name='unlike-image'),
 
