@@ -63,5 +63,4 @@ target/
 # ropeproject of python-mode
 .ropeproject
 db.sqlite3
-gallery/migrations/
 media/

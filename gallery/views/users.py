@@ -8,7 +8,8 @@ from django.contrib.auth.forms import (
         AuthenticationForm,
         UserChangeForm,
 )
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
@@ -16,6 +17,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.conf import settings
+
+from gallery.models.gniuser import GNIUser
 
 
 class SignupUser(CreateView):
@@ -28,6 +31,9 @@ class SignupUser(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
+        guser = GNIUser.objects.create(user=self.object)
+        guser.save()
+
         avatar_dir = os.path.join(settings.MEDIA_ROOT,
                               str(self.object.id),
                               settings.AVATAR_DIR_NAME)
@@ -104,15 +110,21 @@ class UpdateProfileUser(UpdateView):
         return super().form_valid(form)
 
 
-class UserListAlbum(DetailView):
-    model = User
+class UserListAlbum(SingleObjectMixin, ListView):
     template_name = 'user/list_album.html'
 
-    # Need to set context_object_name to avoid conficting 'user' object
-    # in 'gallery/base_generic.html'.
-    context_object_name = 'user_obj'
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=User.objects.all())
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_albums'] = self.object.albums.all()
+        context['user_obj'] = self.object
         return context
+
+    def get_queryset(self):
+        return self.object.albums.all()
+
+
+class UserListImage(SingleObjectMixin, ListView):
+    pass

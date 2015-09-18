@@ -7,9 +7,9 @@
         </div>
     {% endif %}
 
-    {% if user_albums %}
+    {% if object_list %}
         <ul>
-            {% for album in user_albums %}
+            {% for album in object_list %}
             <li>
                 <a href="{% url 'gallery:detail-album' album.id %}">{{ album.title }}</a>
                 <em>Date created: {{ album.time_created }}</em>
