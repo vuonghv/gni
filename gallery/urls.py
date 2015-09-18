@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^comments/(?P<pk>[0-9]+)/like/$', comments.LikeComment.as_view(), name='like-comment'),
     url(r'^comments/(?P<pk>[0-9]+)/unlike/$', comments.UnlikeComment.as_view(), name='unlike-comment'),
     url(r'^comments/(?P<pk>[0-9]+)/delete/$', comments.DeleteComment.as_view(), name='delete-comment'),
+    url(r'^comments/(?P<pk>\d+)/edit/$', comments.UpdateComment.as_view(), name='edit-comment'),
 
 ]

@@ -74,3 +74,24 @@ class DeleteComment(SingleObjectMixin, DeletionMixin, View):
                     content=b'You can not delete the comment.')
 
         return super().delete(request, *args, **kwargs)
+
+
+class UpdateComment(UpdateView):
+    model = Comment
+    fields = ['content',]
+    template_name = 'comment/edit_comment.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('gallery:detail-image',
+                            kwargs={'pk': self.object.image.pk})
+
+    def form_valid(self, form):
+        if form.instance.owner.pk != self.request.user.pk:
+            return HttpResponseForbidden(
+                    content=b'You have no permissions to edit this comment.')
+
+        return super().form_valid(form)

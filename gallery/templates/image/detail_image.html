@@ -43,7 +43,7 @@
     <p>
         <em>{{ c.users_like.count }} likes</em>, time: {{ c.time_updated }}
         {% if user.pk == c.owner.pk %}
-            <a href="#">edit</a>
+        <a href="{% url 'gallery:edit-comment' c.pk %}">edit</a>
             <form style="display:none" id="delete-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:delete-comment' c.pk %}">
                 {% csrf_token %}
             </form>
