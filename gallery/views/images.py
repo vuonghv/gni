@@ -141,7 +141,7 @@ class DeleteImage(DeleteView):
         This method checks if request.user can delete the album.
         """
         self.object = self.get_object()
-        return self.object.owner == request.user
+        return self.object.owner.pk == request.user.pk
 
     def delete(self, request, *args, **kwargs):
         """

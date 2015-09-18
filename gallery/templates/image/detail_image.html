@@ -5,7 +5,7 @@
 <p>Title: {{ image.title }}</p>
 <p>Description: {{ image.description }}</p>
 
-{% if image.owner == user %}
+{% if image.owner.pk == user.pk %}
     <p>
         <a href="#">Edit</a>
         <a href="{% url 'gallery:delete-image' image.pk %}">Delete</a>
@@ -42,7 +42,7 @@
     <p><a href="{% url 'gallery:detail-user' c.owner.id %}">{{ c.owner }}</a>: {{ c.content }}</p>
     <p>
         <em>{{ c.users_like.count }} likes</em>, time: {{ c.time_updated }}
-        {% if user == c.owner %}
+        {% if user.pk == c.owner.pk %}
             <a href="#">edit</a>
             <form style="display:none" id="delete-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:delete-comment' c.pk %}">
                 {% csrf_token %}
