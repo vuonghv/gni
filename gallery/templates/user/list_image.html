@@ -1,0 +1,15 @@
+{% extends "gallery/base_generic.html" %}
+
+{% block content %}
+
+USER: <a href="{% url 'gallery:detail-user' user_obj.pk %}">{{ user_obj.username }}</a>, ID: {{ user_obj.id }}
+<br/><br/>
+
+{% for image in object_list %}
+    <p><a href="{% url 'gallery:detail-image' image.pk %}">{{ image.title }}</a></p>
+    <p><img src="{{ image.img.url }}" height="300px" width="300px"></p>
+    <p>{{ image.users_like.count }} likes</p>
+    <br /><br />
+{% endfor %}
+
+{% endblock %}

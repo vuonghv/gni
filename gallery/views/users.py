@@ -163,6 +163,7 @@ class UserListAlbum(SingleObjectMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context[self.context_object_name] = self.object
         return context
 
     def get_queryset(self):
@@ -170,4 +171,17 @@ class UserListAlbum(SingleObjectMixin, ListView):
 
 
 class UserListImage(SingleObjectMixin, ListView):
-    pass
+    template_name = 'user/list_image.html'
+    context_object_name = 'user_obj'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=User.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[self.context_object_name] = self.object
+        return context
+
+    def get_queryset(self):
+        return self.object.images.all()
