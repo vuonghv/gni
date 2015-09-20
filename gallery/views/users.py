@@ -19,6 +19,7 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 
 from gallery.models.gniuser import GNIUser
+from gallery.forms.users import UserProfileForm, GNIUserProfileForm
 
 
 class SignupUser(CreateView):
@@ -91,7 +92,7 @@ class DetailUser(DetailView):
 
 class UpdateProfileUser(UpdateView):
     model = User
-    fields = ['first_name', 'last_name', 'email']
+    form_class = UserProfileForm
     template_name = 'user/update_profile.html'
     context_object_name = 'user_obj'
 
@@ -103,15 +104,58 @@ class UpdateProfileUser(UpdateView):
         return reverse_lazy('gallery:detail-user',
                             kwargs={'pk': self.object.pk})
 
-    def form_valid(self, form):
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests and instantiates the fields of forms with
+        associated model's data.
+        """
+        self.object = self.get_object()
+        form = self.get_form()
+        guser_form = GNIUserProfileForm(instance=self.object.gniuser)
+        return self.render_to_response(
+                self.get_context_data(form=form, guser_form=guser_form))
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests and update data of forms with the passed
+        POST adn FILES variables and the checked for validity.
+        """
+        self.object = self.get_object()
+        form = self.get_form()
+        guser_form = GNIUserProfileForm(instance=self.object.gniuser,
+                                        data=self.request.POST,
+                                        files=self.request.FILES)
+
+        if form.is_valid() and guser_form.is_valid():
+            return self.form_valid(form, guser_form)
+        else:
+            return self.form_invalid(form, guser_form)
+
+    def form_valid(self, form, guser_form):
+        """
+        If the form is valid, and form.instance is current user,
+        save the associated model and re-direct to the success_url.
+        """
         if form.instance.pk != self.request.user.pk:
             raise PermissionDenied(
                     'You have no permissions to edit user %s' % form.instance)
-        return super().form_valid(form)
+
+        self.object = form.save()
+        guser_form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, guser_form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(
+                self.get_context_data(form=form, guser_form=guser_form))
 
 
 class UserListAlbum(SingleObjectMixin, ListView):
     template_name = 'user/list_album.html'
+    context_object_name = 'user_obj'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=User.objects.all())
@@ -119,7 +163,6 @@ class UserListAlbum(SingleObjectMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_obj'] = self.object
         return context
 
     def get_queryset(self):
