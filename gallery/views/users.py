@@ -13,6 +13,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
+from django.core import paginator
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
@@ -173,6 +174,8 @@ class UserListAlbum(SingleObjectMixin, ListView):
 class UserListImage(SingleObjectMixin, ListView):
     template_name = 'user/list_image.html'
     context_object_name = 'user_obj'
+    paginate_by = 2
+    paginator_class = paginator.Paginator
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=User.objects.all())
@@ -184,4 +187,4 @@ class UserListImage(SingleObjectMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.object.images.all()
+        return self.object.images.order_by('-time_created')

@@ -107,8 +107,8 @@
     -->
 
     <div class="container">
-        {% block content %}
       <!-- Example row of columns -->
+    {% block content %}
       <div class="row">
         <div class="col-md-4">
           <h2>Heading</h2>
@@ -126,14 +126,17 @@
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
       </div>
-      {% endblock %}
 
+    {% endblock %}
+    </div> <!-- /container -->
+
+    <div class="container">
       <hr>
 
       <footer>
           <p>&copy; GNI is Not Instagram 2015, by <a href="https://twitter.com/vuongmax/">@vuongmax</a></p>
       </footer>
-    </div> <!-- /container -->
+    </div>
 
 
     <!-- Bootstrap core JavaScript
