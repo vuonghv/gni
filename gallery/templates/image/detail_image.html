@@ -2,81 +2,127 @@
 
 {% block content %}
 
-<p>Title: {{ image.title }}</p>
-<p>Description: {{ image.description }}</p>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ image.title }}</h3>
+        </div>
+    </div>
 
-{% if image.owner.pk == user.pk %}
-    <p>
-        <a href="#">Edit</a>
-        <a href="{% url 'gallery:delete-image' image.pk %}">Delete</a>
-    </p>
-{% endif %}
-<img height="200px" width="400px" src="{{ image.img.url }}" />
-<p>
-    {% if liked %}
+    <div class="row"> 
+        <div class="col-md-8">
+            <p><img width="100%" src="{{ image.img.url }}" /></p>
+            {% if image.owner.pk == user.pk %}
+                <p class="text-right">
+                    <a href="#">Edit</a>
+                    <a href="{% url 'gallery:delete-image' image.pk %}" class="text-danger">Delete</a>
+                </p>
+            {% endif %}
 
-        <p>
-            <form style="display:none" id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.pk %}">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="document.getElementById('unlike-image-{{ image.id }}-form').submit();">Unlike</a>
-        </p>
-        <a href="{% url 'gallery:detail-user' user.id %}">You</a> and {{ number_others_like }} others like this, Date posted: {{ image.time_created }}
+            {% if liked %}
 
-    {% else %}
+                <p class="hidden">
+                    <form id="unlike-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:unlike-image' image.pk %}">
+                        {% csrf_token %}
+                    </form>
+                </p>
+                <a class="text-success" href="#" onclick="document.getElementById('unlike-image-{{ image.id }}-form').submit();">Unlike</a>
+                <p><a href="{% url 'gallery:detail-user' user.id %}">You</a> and {{ number_others_like }} others like this, <span class="text-muted" title="{{ image.time_created }}">{{ image.time_created|timesince }}</span></p>
 
-        <p>
-            <form style="display:none" id="like-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:like-image' image.pk %}">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="document.getElementById('like-image-{{ image.id }}-form').submit();">Like</a>
-        </p>
-        {{ users_like.count }} others like this, Date posted: {{ image.time_created }}
+            {% else %}
 
-    {% endif %}
+                <p class="hidden">
+                    <form style="display:none" id="like-image-{{ image.id }}-form" method="POST" action="{% url 'gallery:like-image' image.pk %}">
+                        {% csrf_token %}
+                    </form>
+                </p>
+                <a class="text-success" href="#" onclick="document.getElementById('like-image-{{ image.id }}-form').submit();">Like</a>
+                <p>{{ users_like.count }} other{{ users_like.count|pluralize:"s" }} like this, <span class="text-muted" title="{{ image.time_created }}">{{ image.time_created|timesince }}</span></p>
+
+            {% endif %}
+                    
+        </div>{% comment %} .col-md-8 {% endcomment %}
         
-</p>
-<br />
-<p>Comments:</p>
+        <div class="col-md-4">
+            <p>{{ image.description }}</p>
+        </div>
+    </div>{% comment %} .row {% endcomment %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <br/>
+        </div>
+    </div>
+
 {% for c in comments %}
-    <p><a href="{% url 'gallery:detail-user' c.owner.id %}">{{ c.owner }}</a>: {{ c.content }}</p>
-    <p>
-        <em>{{ c.users_like.count }} likes</em>, time: {{ c.time_updated }}
-        {% if user.pk == c.owner.pk %}
-        <a href="{% url 'gallery:edit-comment' c.pk %}">edit</a>
-            <form style="display:none" id="delete-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:delete-comment' c.pk %}">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="document.getElementById('delete-comment-{{ c.id }}-form').submit();">delete</a>
-        {% endif %}
-    </p>
-    
-    <p>
-        {% if user in c.users_like.all %}
+    <div class="row">
+        <div class="col-md-8">
 
-        <form style="display:none" id="unlike-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:unlike-comment' c.id %}">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="document.getElementById('unlike-comment-{{ c.id }}-form').submit();">Unlike</a>
+            <div class="media">
+                <div class="media-left">
+                    <a href="{% url 'gallery:detail-user' c.owner.pk %}">
+                        <img class="media-object" src="{{ c.owner.gniuser.avatar.url }}" alt="avatar" width="64px" height="64px"/>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h5 class="media-heading"><a href="{% url 'gallery:detail-user' c.owner.pk %}">{{ c.owner.get_full_name }}</a></h5>
+                    {{ c.content }}
+                    <p>
+                        {% if user in c.users_like.all %}
 
-        {% else %}
+                        <form class="hidden" id="unlike-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:unlike-comment' c.id %}">
+                            {% csrf_token %}
+                        </form>
+                        <a class="text-success" href="#" onclick="document.getElementById('unlike-comment-{{ c.id }}-form').submit();">Unlike</a>
 
-            <form style="display:none" id="like-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:like-comment' c.id %}">
-                {% csrf_token %}
-            </form>
-            <a href="#" onclick="document.getElementById('like-comment-{{ c.id }}-form').submit();">Like</a>
+                        {% else %}
 
-        {% endif %}
-    </p>
-    <br/>
+                        <form class="hidden" id="like-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:like-comment' c.id %}">
+                            {% csrf_token %}
+                        </form>
+                        <a class="text-success" href="#" onclick="document.getElementById('like-comment-{{ c.id }}-form').submit();">Like</a>
+
+                        {% endif %}
+                        <em>{{ c.users_like.count }} likes</em>, <span class="text-muted" title="{{ c.time_updated }}">{{ c.time_updated|timesince }}</span>
+
+                        {% if user.pk == c.owner.pk %}
+                            <a href="{% url 'gallery:edit-comment' c.pk %}">edit</a>
+                            <form class="hidden" id="delete-comment-{{ c.id }}-form" method="POST" action="{% url 'gallery:delete-comment' c.pk %}">
+                                {% csrf_token %}
+                            </form>
+                            <a class="text-danger text-right" href="#" onclick="document.getElementById('delete-comment-{{ c.id }}-form').submit();">delete</a>
+                        {% endif %}
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endfor %}
+    
 
-<br/></br>
-<p>{{ user }}:</p>
-<form method="POST" action="{% url 'gallery:detail-image' image.pk %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Post comment" />
-</form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="media">
+                <div class="media-left">
+                    <a href="{% url 'gallery:detail-user' user.pk %}">
+                        <img class="media-object" src="{{ user.gniuser.avatar.url }}" alt="avatar" width="64px" height="64px" />
+                    </a>
+                </div>
+
+                <div class="media-body">
+                    <form method="POST" action="{% url 'gallery:detail-image' image.pk %}">
+                        <div class="form-group">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {{ field.errors }}
+                            {{ field }}
+                        {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

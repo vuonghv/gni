@@ -17,7 +17,7 @@
     {% if user.is_authenticated and user == user_obj %}
         <div class="row">
             <div class="col-md-2 col-md-offset-10">
-                <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+                <a href="{% url 'gallery:create-album' %}" class="btn btn-danger">Create a new album</a>
             </div>
         </div>
     {% endif %}
@@ -70,8 +70,7 @@
                             <p>{{ album.description|truncatewords:25 }}</p>
                             <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
                             <p>
-                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-primary" role="button">Detail</a>
-                                <a href="{% url 'gallery:update-album' album.pk %}" class="btn btn-default" role="button">Update</a>
+                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-default" role="button">Explode</a
                             </p>
                         </div>
                     </div>
