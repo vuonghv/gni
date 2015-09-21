@@ -32,7 +32,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <p><a href="{% url 'gallery:detail-image' image.pk %}">{{ image.title }}</a></p>
                 <p><img src="{{ image.img.url }}" height="400px" width="550px" /></p>
-                <p>{{ image.users_like.count }} likes</p>
+                <p>{{ image.users_like.count }} like{{ image.users_like.count|pluralize }}</p>
                 <br>
                 <br>
             </div>
@@ -57,7 +57,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <p><a href="{% url 'gallery:detail-image' image.pk %}">{{ image.title }}</a></p>
                 <p><img src="{{ image.img.url }}" height="400px" width="550px" /></p>
-                <p>{{ image.users_like.count }} likes</p>
+                <p>{{ image.users_like.count }} like{{ image.users_like.count|pluralize }}</p>
                 <br>
                 <br>
             </div>

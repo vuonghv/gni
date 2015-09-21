@@ -1,22 +1,89 @@
 {% extends 'gallery/base_generic.html' %}
 
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="container">
-            <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                {% if user == user_obj %}
+                    <h2>All your albums <small>your exprience, your life</small></h2>
+                {% else %}
+                    <h2>All {{ user_obj.username }}'s albums <small>welcome to {{ user_obj.username }}'s gallery</small></h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated and user == user_obj %}
+        <div class="row">
+            <div class="col-md-2 col-md-offset-10">
+                <a href="{% url 'gallery:create-album' %}" class="btn btn-primary">Create a new album</a>
+            </div>
         </div>
     {% endif %}
 
-    {% if object_list %}
-        <ul>
-            {% for album in object_list %}
-            <li>
-                <a href="{% url 'gallery:detail-album' album.id %}">{{ album.title }}</a>
-                <em>Date created: {{ album.time_created }}</em>
-            </li>
+
+    {% if is_paginated %}
+        
+        <div class="row">
+            {% for album in page_obj %}
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="{{ album.thumbnail_url }}" alt="Set a thumbnail, please!" />
+                        <div class="caption">
+                            <h3>{{ album.title }}</h3>
+                            <p>{{ album.description|truncatewords:25 }}</p>
+                            <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
+                            <p>
+                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-primary" role="button">Detail</a>
+                                <a href="{% url 'gallery:update-album' album.pk %}" class="btn btn-default" role="button">Update</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:"3" %}
+        </div>{% comment %}close ".row"{% endcomment %}
+        <div class="row">
+                {% endif %}
             {% endfor %}
-        </ul>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <nav>
+                    <ul class="pager">
+                        <li class="previous {{ page_obj.has_previous|yesno:',disabled' }}"><a href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number}}{% else %}{{ page_obj.number }}{% endif %}"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                        <li class="next {{ page_obj.has_next|yesno:',disabled' }}"><a href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number}}{% else %}{{ page_obj.number }}{% endif %}">Next <span aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        
+    {% elif object_list %}
+        <div class="row">
+            {% for album in object_list %}
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="{{ album.thumbnail_url }}" alt="Set a thumbnail, please!" />
+                        <div class="caption">
+                            <h3>{{ album.title }}</h3>
+                            <p>{{ album.description|truncatewords:25 }}</p>
+                            <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
+                            <p>
+                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-primary" role="button">Detail</a>
+                                <a href="{% url 'gallery:update-album' album.pk %}" class="btn btn-default" role="button">Update</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:"3" %}
+        </div>{% comment %}close ".row"{% endcomment %}
+        <div class="row">
+                {% endif %}
+            {% endfor %}
+        </div>
     {% else %}
         <p>YOU HAVE NO ALBUMS.</p>
-    {% endif %}
+        {% endif %}{% comment %}end of if is_paginated{% endcomment %}
+
 {% endblock %}

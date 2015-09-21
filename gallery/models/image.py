@@ -4,8 +4,6 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
-from .album import Album
-
 
 def upload_to_dir(instance, filename):
     return '{user_id}/{album_id}/{filename}'.format(
@@ -22,7 +20,7 @@ class Image(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateTimeField(auto_now=True)
 
-    album = models.ForeignKey(Album, related_name='images')
+    album = models.ForeignKey('gallery.Album', related_name='images')
 
     owner = models.ForeignKey(User, related_name='images')
 

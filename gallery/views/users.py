@@ -157,6 +157,7 @@ class UpdateProfileUser(UpdateView):
 class UserListAlbum(SingleObjectMixin, ListView):
     template_name = 'user/list_album.html'
     context_object_name = 'user_obj'
+    paginate_by = 9
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=User.objects.all())
@@ -168,14 +169,13 @@ class UserListAlbum(SingleObjectMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.object.albums.all()
+        return self.object.albums.order_by('-time_updated')
 
 
 class UserListImage(SingleObjectMixin, ListView):
     template_name = 'user/list_image.html'
     context_object_name = 'user_obj'
-    paginate_by = 2
-    paginator_class = paginator.Paginator
+    paginate_by = 3
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=User.objects.all())

@@ -80,7 +80,7 @@ class UpdateAlbum(UpdateView):
                     kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
-        form.instance.thumbnail = ''
+        form.instance.thumbnail = None
         return super().form_valid(form)
 
 
