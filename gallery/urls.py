@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^images/(?P<pk>[0-9]+)/delete/$', images.DeleteImage.as_view(), name='delete-image'),
     url(r'^images/(?P<pk>[0-9]+)/like/$', images.LikeImage.as_view(), name='like-image'),
     url(r'^images/(?P<pk>[0-9]+)/unlike/$', images.UnlikeImage.as_view(), name='unlike-image'),
+    url(r'^images/(?P<pk>[0-9]+)/edit/$', images.UpdateImage.as_view(), name='update-image'),
 
     url(r'^comments/(?P<pk>[0-9]+)/like/$', comments.LikeComment.as_view(), name='like-comment'),
     url(r'^comments/(?P<pk>[0-9]+)/unlike/$', comments.UnlikeComment.as_view(), name='unlike-comment'),

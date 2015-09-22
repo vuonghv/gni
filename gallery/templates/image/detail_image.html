@@ -3,7 +3,7 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-10">
             <h3>{{ image.title }}</h3>
         </div>
     </div>
@@ -13,7 +13,7 @@
             <p><img width="100%" src="{{ image.img.url }}" /></p>
             {% if image.owner.pk == user.pk %}
                 <p class="text-right">
-                    <a href="#">Edit</a>
+                    <a href="{% url 'gallery:update-image' image.pk %}">Edit</a>
                     <a href="{% url 'gallery:delete-image' image.pk %}" class="text-danger">Delete</a>
                 </p>
             {% endif %}
@@ -100,6 +100,7 @@
 {% endfor %}
     
 
+{% if user.is_authenticated %}
     <div class="row">
         <div class="col-md-8">
             <div class="media">
@@ -123,6 +124,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>{% comment %} .row {% endcomment %}
+{% endif %}
 
 {% endblock %}

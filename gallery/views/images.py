@@ -3,7 +3,7 @@ import hashlib
 
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import CreateView, FormView, DeleteView
+from django.views.generic.edit import CreateView, FormView, DeleteView, UpdateView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -196,3 +196,23 @@ class UnlikeImage(SingleObjectMixin, View):
 
     def put(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+
+class UpdateImage(UpdateView):
+    model = Image
+    fields = ['title', 'description']
+    template_name = 'image/update_image.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('gallery:detail-image',
+                            kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        if self.object.owner.pk != self.request.user.pk:
+            return HttpResponseForbidden(
+                    content=b'You have no permissions to edit this image!')
+        return super().form_valid(form)

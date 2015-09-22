@@ -1,20 +1,15 @@
-from django.views.generic.base import TemplateView
+from django.views.generic import ListView
 
-from .albums import Album
+from gallery.models.image import Image
 
 
-class GalleryIndex(TemplateView):
+class GalleryIndex(ListView):
+    model = Image
     template_name = 'gallery/index.html'
+    paginate_by = 5
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        user = self.request.user
-        if user.is_authenticated():
-            context['album_list'] = user.albums.order_by('-time_created')
-        else:
-            context['album_list'] = Album.objects.order_by('-time_created')
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            return self.request.user.images.order_by('-time_created')
 
-        # TODO: Get timeline photo
-
-        return context
+        return Image.objects.order_by('-time_created')
