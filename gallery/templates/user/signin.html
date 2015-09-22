@@ -1,10 +1,18 @@
 {% extends 'gallery/base_generic.html' %}
 
+{% block header %}
+{% endblock %}
+
 {% block content %}
-    <form id="form-signin" method="POST" action="{% url 'gallery:signin' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Sign In" />
+    <form class="form-horizontal" id="user-signin-form" method="POST" action="{% url 'gallery:signin' %}">
+        {% include 'forms/horizontal_form.html' %}
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-4">
+                <button type="submit" class="btn btn-success">Sign in</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'gallery:signup' %}">Sign up</a>
+            </div>
+        </div>
+
     </form>
 
 {% endblock %}
