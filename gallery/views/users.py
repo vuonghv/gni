@@ -57,21 +57,9 @@ def signin(request):
         signin_form = AuthenticationForm(data=request.POST)
 
         if signin_form.is_valid():
-            user = authenticate(username=signin_form.cleaned_data['username'],
-                                password=signin_form.cleaned_data['password'])
-
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect(reverse('gallery:index'))
-                else:
-                    return HttpResponse('Your account [%s] is disable!' %
-                                        user.username)
-            else:
-                return HttpResponse('Invalid username or password!')
-
-        else:
-            HttpResponse(signin_form.errors)
+            user = signin_form.get_user()
+            login(request, user)
+            return HttpResponseRedirect(reverse('gallery:index'))
 
     else:
         signin_form = AuthenticationForm()
