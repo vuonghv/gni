@@ -13,7 +13,10 @@ def upload_to_dir(instance, filename):
 
 
 class Image(models.Model):
-    img = models.ImageField(upload_to=upload_to_dir, max_length=257)
+    img = models.ImageField(upload_to=upload_to_dir, max_length=257,
+                            width_field='width', height_field='height')
+    width = models.PositiveSmallIntegerField(default=650)
+    height = models.PositiveSmallIntegerField(default=750)
 
     title = models.TextField(blank=True, default='')
     description = models.TextField(blank=True, default='')
