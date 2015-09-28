@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 {% if forloop.counter|divisibleby:"3" %}
-        </div>{% comment %}close ".row"{% endcomment %}
+        </div>{# close ".row" #}
         <div class="row">
                 {% endif %}
             {% endfor %}
@@ -59,7 +59,7 @@
             </div>
         </div>
         
-    {% elif object_list %}
+    {% else %}{# if object_list is not paginated #}
         <div class="row">
             {% for album in object_list %}
                 <div class="col-md-4">
@@ -70,19 +70,21 @@
                             <p>{{ album.description|truncatewords:25 }}</p>
                             <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
                             <p>
-                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-default" role="button">Explode</a
+                                <a href="{% url 'gallery:detail-album' album.pk %}" class="btn btn-default" role="button">Explode</a>
                             </p>
                         </div>
                     </div>
                 </div>
                 {% if forloop.counter|divisibleby:"3" %}
-        </div>{% comment %}close ".row"{% endcomment %}
+        </div>{# close ".row" #}
         <div class="row">
                 {% endif %}
+            {% empty %}
+            <div class="col-md-8">
+                <p>You have no albums.</p>
+            </div>
             {% endfor %}
         </div>
-    {% else %}
-        <p>YOU HAVE NO ALBUMS.</p>
-        {% endif %}{% comment %}end of if is_paginated{% endcomment %}
+    {% endif %}{# end of if is_paginated #}
 
 {% endblock %}
