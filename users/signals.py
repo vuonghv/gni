@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
@@ -34,6 +35,9 @@ def create_user_profile(sender, instance, created, raw, using, update_fields, **
 
 
 @receiver(post_delete, sender=settings.AUTH_USER_MODEL)
-def delete_user_profile(sender, **kwargs):
-    # TODO: Need to do something when an user is deleted.
-    pass
+def delete_user_profile(sender, instance, using, **kwargs):
+    user_folder = os.path.join(settings.MEDIA_ROOT, str(instance.pk))
+    try:
+        shutil.rmtree(user_folder)
+    except (OSError, Exception) as err:
+        print('Delete user err: {}'.format(err.strerror))

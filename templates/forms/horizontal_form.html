@@ -1,0 +1,38 @@
+<div class="form-group hidden">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+</div>
+
+{% if form.non_field_errors %}
+<div class="form-group">
+    <div class="col-sm-8 col-sm-offset-2">
+        <ul>
+        {% for err in form.non_field_errors %}
+        <li><span class="text-warning">{{ err }}</span></li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% for field in form.visible_fields %}
+<div class="form-group {{ field.errors|yesno:'has-error,' }}">
+        <label for="{{ field.id_for_label }}" class="col-sm-2 col-sm-offset-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-4">
+            <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" aria-describedby="help_text_{{ field.id_for_label }}" value="{{ field.value|default:'' }}">
+            {% if field.help_text %}
+                <span id="help_text_{{ field.id_for_label }}" class="help-block">{{ field.help_text }}</span>
+            {% endif %}
+
+            {% if field.errors %}
+            <ul>
+                {% for error in field.errors %}
+                <li><span class="text-danger">{{ error|escape }}</span></li>
+                {% endfor %}
+            </ul>
+            {% endif %} 
+        </div>
+    </div>
+{% endfor %}

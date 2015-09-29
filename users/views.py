@@ -61,12 +61,13 @@ def signin(request):
         if signin_form.is_valid():
             user = signin_form.get_user()
             login(request, user)
-            return HttpResponseRedirect(reverse('gallery:index'))
+            # TODO: need to change redirect in the future.
+            return HttpResponseRedirect(reverse('users:signup'))
 
     else:
         signin_form = AuthenticationForm()
 
-    return render(request, 'user/signin.html', {'form': signin_form})
+    return render(request, 'users/signin.html', {'form': signin_form})
 
 
 @login_required
