@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from django.db import models
 from django.conf import settings
 
@@ -24,3 +27,13 @@ class Album(models.Model):
             return self.images.order_by('-time_created')[0].img.url
 
         return ''
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        album_path = os.path.join(settings.MEDIA_ROOT,
+                                str(self.owner.pk),
+                                str(self.pk))
+        try:
+            shutil.rmtree(album_path)
+        except (OSError, Exception) as err:
+            print('Delete album err: {}'.format(err.strerror))

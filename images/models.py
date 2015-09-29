@@ -29,3 +29,11 @@ class Image(models.Model):
 
     def __str__(self):
         return self.title
+
+    def delete(self, *args, **kwargs):
+        """
+        Delete the image file when an image object is deleted from database.
+        """
+        super().delete(*args, **kwargs)
+        if self.img:
+            self.img.delete(save=False)

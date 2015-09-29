@@ -1,14 +1,14 @@
 import os
 
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.conf import settings
 
 from users.models import UserProfile
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_profile(sender, instance, created, raw, using, update_fields):
+def create_user_profile(sender, instance, created, raw, using, update_fields, **kwargs):
     """
     Creat a Profile for User when a newly user is created,
     and create avatar and timeline folders.
