@@ -37,7 +37,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gallery.apps.GalleryConfig',
+    
+    # For project's apps
+    #'gallery.apps.GalleryConfig',
+    'users',
+    'albums',
+    'images',
+    'comments',
 
     # For debug toolbar
     'debug_toolbar',
@@ -117,3 +123,5 @@ LOGIN_URL = '/gni/signin'
 AVATAR_DIR_NAME = 'avatar'
 
 TIMELINE_DIR_NAME = 'timeline'
+
+AUTH_PROFILE_MODULE = 'users.UserProfile'
