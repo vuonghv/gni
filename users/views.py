@@ -1,26 +1,22 @@
 import os
 
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import (
         UserCreationForm,
         AuthenticationForm,
-        UserChangeForm,
 )
 from django.views.generic import DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
-from django.core import paginator
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.apps import apps as django_apps
 
-#from gallery.models.gniuser import GNIUser
 from images.models import Image
 from users.forms import UserForm, UserProfileForm
 
@@ -41,7 +37,6 @@ def signin(request):
         if signin_form.is_valid():
             user = signin_form.get_user()
             login(request, user)
-            # TODO: need to change redirect in the future.
             return HttpResponseRedirect(reverse('users:home'))
 
     else:

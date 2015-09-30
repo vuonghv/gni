@@ -31,7 +31,7 @@ def create_user_profile(sender, instance, created, raw, using, update_fields, **
         os.makedirs(avatar_dir, mode=0o700)
         os.makedirs(timeline_dir, mode=0o700)
     except OSError as err:
-        print('OSError: {}'.format(err.strerror))
+        print('Created user\'s directory error: {}'.format(err.strerror))
 
 
 @receiver(post_delete, sender=settings.AUTH_USER_MODEL)
@@ -40,4 +40,4 @@ def delete_user_profile(sender, instance, using, **kwargs):
     try:
         shutil.rmtree(user_folder)
     except (OSError, Exception) as err:
-        print('Delete user err: {}'.format(err.strerror))
+        print('Delete user\'s directory error: {}'.format(err.strerror))

@@ -1,27 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                {% if user == user_obj %}
-                    <h2>All your albums <small>your exprience, your life</small></h2>
-                {% else %}
-                    <h2>All {{ user_obj.username }}'s albums <small>welcome to {{ user_obj.username }}'s gallery</small></h2>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    {% if user.is_authenticated and user == user_obj %}
-        <div class="row">
-            <div class="col-md-2 col-md-offset-10">
-                <a href="{% url 'albums:new' %}" class="btn btn-danger">Create a new album</a>
-            </div>
-        </div>
-    {% endif %}
-
 
     {% if is_paginated %}
         
@@ -35,7 +14,8 @@
                             <p>{{ album.description|truncatewords:25 }}</p>
                             <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
                             <p>
-                            <a href="{% url 'albums:detail' album.pk %}" class="btn btn-default" role="button">Explode</a>
+                                <a href="#" class="btn btn-primary" role="button">Detail</a>
+                                <a href="#" class="btn btn-default" role="button">Update</a>
                             </p>
                         </div>
                     </div>
@@ -69,7 +49,7 @@
                             <p>{{ album.description|truncatewords:25 }}</p>
                             <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
                             <p>
-                            <a href="{% url 'albums:detail' album.pk %}" class="btn btn-default" role="button">Explode</a>
+                                <a href="#" class="btn btn-default" role="button">Explode</a>
                             </p>
                         </div>
                     </div>
