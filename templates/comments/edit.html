@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <form method="POST" action="{% url 'comments:edit' comment.pk %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit" class="btn btn-default"/>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

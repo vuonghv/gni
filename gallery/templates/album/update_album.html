@@ -1,9 +1,0 @@
-{% extends 'gallery/base_generic.html' %}
-
-{% block content %}
-    <form method="POST" action="{% url 'gallery:update-album' album.id %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Update" class="btn btn-success btn-lg" />
-    </form>
-{% endblock %}

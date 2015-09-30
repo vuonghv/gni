@@ -1,9 +1,0 @@
-{% extends 'gallery/base_generic.html' %}
-
-{% block content %}
-<form method="POST" action="{% url 'gallery:create-comment' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Post comment" />
-</form>
-{% endblock %}

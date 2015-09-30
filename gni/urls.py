@@ -15,18 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.apps import apps as django_apps
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^gni/',
-        include('gallery.urls',
-                namespace=django_apps.get_app_config('gallery').name,
-                app_name=django_apps.get_app_config('gallery').name
-        )
-    ),
-
+    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^albums/', include('albums.urls', namespace='albums')),
+    url(r'^images/', include('images.urls', namespace='images')),
+    url(r'^comments/', include('comments.urls', namespace='comments')),
     url(r'^admin/', include(admin.site.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

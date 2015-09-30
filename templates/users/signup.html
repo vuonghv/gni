@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" method="POST" action="{% url 'users:signup' %}" id="form-signup">
+    {% include 'forms/horizontal_form.html' %}
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <button type="submit" class="btn btn-danger">Sign up</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'users:signin' %}">Sign in</a>
+        </div>
+    </div>
+{% endblock %}

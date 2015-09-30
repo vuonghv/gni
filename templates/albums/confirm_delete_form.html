@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form method="POST" action="{% url 'albums:delete' album.pk %}">
+                {% csrf_token %}
+                <p class="text-danger">Are you sure want to DELETE [{{ album }}]?</p>
+                <a href="{% url 'albums:detail' album.pk %}">Back</a>
+                <input type="submit" value="Yes, please" class="btn btn-danger btn-sm" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

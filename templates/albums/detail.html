@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if album %}
+        <div class="row">
+            <div class="col-md-10">
+                <h2>{{ album.title }}</h2>
+                <p class="lead">{{ album.description }}</p>
+                {% if album.owner == user %}
+                    <p class="text-right">
+                    <a href="{% url 'albums:edit' album.pk %}" class="text-success">Update</a>
+                        <a href="{% url 'albums:delete' album.pk %}" class="text-danger">Delete album</a>
+                    </p>
+                {% endif %}
+                <br />
+            </div>
+        </div>
+
+        <div class="row">
+            {% for image in images %}
+                <div class="col-md-4">
+                    <a class="thumbnail" href="{% url 'images:detail' image.pk %}"><img src="{{ image.img.url }}" height="240px"/></a>
+                </div>
+                {% if forloop.counter|divisibleby:"3" %}
+        </div>
+        <div class="row">
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <p class="text-warning">No albums</p>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
