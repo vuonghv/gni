@@ -19,7 +19,7 @@
         <div class="row">
             {% for image in images %}
                 <div class="col-md-4">
-                    <a class="thumbnail" href="#"><img src="{{ image.img.url }}" height="240px"/></a>
+                    <a class="thumbnail" href="{% url 'images:detail' image.pk %}"><img src="{{ image.img.url }}" height="240px"/></a>
                 </div>
                 {% if forloop.counter|divisibleby:"3" %}
         </div>

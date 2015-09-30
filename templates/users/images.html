@@ -30,7 +30,7 @@
     {% for image in page_obj %}
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <p><a href="#">{{ image.title }}</a></p>
+                <p><a href="{% url 'images:detail' image.pk %}">{{ image.title }}</a></p>
                 <p><img src="{{ image.img.url }}" height="400px" width="550px" /></p>
                 <p>{{ image.users_like.count }} like{{ image.users_like.count|pluralize }}</p>
                 <br>
@@ -55,7 +55,7 @@
     {% for image in object_list %}
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <p><a href="#">{{ image.title }}</a></p>
+                <p><a href="{% url 'images:detail' image.pk %}">{{ image.title }}</a></p>
                 <p><img src="{{ image.img.url }}" height="400px" width="550px" /></p>
                 <p>{{ image.users_like.count }} like{{ image.users_like.count|pluralize }}</p>
                 <br>

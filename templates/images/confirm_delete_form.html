@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-2 col-md-8">
+        <form method="POST" action="{% url 'images:delete' image.pk %}">
+            {% csrf_token %}
+            <p class="text-danger">Are you sure want to DELETE [{{ image }}]?</p>
+            <input type="submit" value="Yes, please" class="btn btn-danger" />
+        </form>
+        <a href="{% url 'images:detail' image.pk %}" class="btn btn-primary">No, thanks</a>
+    </div>
+</div>
+
+{% endblock %}
