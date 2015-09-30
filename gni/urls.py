@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^users/', include('users.urls', namespace='users')),
     url(r'^albums/', include('albums.urls', namespace='albums')),
     url(r'^images/', include('images.urls', namespace='images')),
+    url(r'^comments/', include('comments.urls', namespace='comments')),
     url(r'^admin/', include(admin.site.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

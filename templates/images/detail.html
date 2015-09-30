@@ -60,23 +60,23 @@
             <div class="media">
                 <div class="media-left">
                     <a href="{% url 'users:detail' c.owner.pk %}">
-                        <img class="media-object" src="{{ c.owner.profile.avatar.url }}" alt="avatar" width="64px" height="64px"/>
+                        <img class="media-object" src="{% if c.owner.profile.avatar %}{{ c.owner.profile.avatar.url }}{% endif %}" alt="avatar" width="64px" height="64px"/>
                     </a>
                 </div>
                 <div class="media-body">
-                    <h5 class="media-heading"><a href="{% url 'users:detail' c.owner.pk %}">{{ c.owner.get_full_name }}</a></h5>
+                    <h5 class="media-heading"><a href="{% url 'users:detail' c.owner.pk %}">{{ c.owner.get_full_name|default:c.owner.username }}</a></h5>
                     {{ c.content }}
                     <p>
                         {% if user in c.users_like.all %}
 
-                        <form class="hidden" id="unlike-comment-{{ c.id }}-form" method="POST" action="#">
+                        <form class="hidden" id="unlike-comment-{{ c.id }}-form" method="POST" action="{% url 'comments:unlike' c.pk %}">
                             {% csrf_token %}
                         </form>
                         <a class="text-success" href="#" onclick="document.getElementById('unlike-comment-{{ c.id }}-form').submit();">Unlike</a>
 
                         {% else %}
 
-                        <form class="hidden" id="like-comment-{{ c.id }}-form" method="POST" action="#">
+                        <form class="hidden" id="like-comment-{{ c.id }}-form" method="POST" action="{% url 'comments:like' c.pk %}">
                             {% csrf_token %}
                         </form>
                         <a class="text-success" href="#" onclick="document.getElementById('like-comment-{{ c.id }}-form').submit();">Like</a>
@@ -85,8 +85,8 @@
                         <em>{{ c.users_like.count }} likes</em>, <span class="text-muted" title="{{ c.time_updated }}">{{ c.time_updated|timesince }}</span>
 
                         {% if user.pk == c.owner.pk %}
-                            <a href="#">edit</a>
-                            <form class="hidden" id="delete-comment-{{ c.id }}-form" method="POST" action="#">
+                            <a href="{% url 'comments:edit' c.pk %}">edit</a>
+                            <form class="hidden" id="delete-comment-{{ c.id }}-form" method="POST" action="{% url 'comments:delete' c.pk %}">
                                 {% csrf_token %}
                             </form>
                             <a class="text-danger text-right" href="#" onclick="document.getElementById('delete-comment-{{ c.id }}-form').submit();">delete</a>
@@ -106,7 +106,7 @@
             <div class="media">
                 <div class="media-left">
                     <a href="{% url 'users:detail' user.pk %}">
-                        <img class="media-object" src="{{ user.profile.avatar.url }}" alt="avatar" width="64px" height="64px" />
+                        <img class="media-object" src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% endif %}" alt="avatar" width="64px" height="64px" />
                     </a>
                 </div>
 
