@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                {% if user == user_obj %}
+                    <h2>All your albums <small>your exprience, your life</small></h2>
+                {% else %}
+                    <h2>All {{ user_obj.username }}'s albums <small>welcome to {{ user_obj.username }}'s gallery</small></h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated and user == user_obj %}
+        <div class="row">
+            <div class="col-md-2 col-md-offset-10">
+                <a href="#" class="btn btn-danger">Create a new album</a>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if is_paginated %}
+        
+        <div class="row">
+            {% for album in page_obj %}
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="{{ album.thumbnail_url }}" alt="Set a thumbnail, please!" />
+                        <div class="caption">
+                            <h3>{{ album.title }}</h3>
+                            <p>{{ album.description|truncatewords:25 }}</p>
+                            <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
+                            <p>
+                                <a href="#" class="btn btn-primary" role="button">Detail</a>
+                                <a href="#" class="btn btn-default" role="button">Update</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:"3" %}
+        </div>{# close ".row" #}
+        <div class="row">
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <nav>
+                    <ul class="pager">
+                        <li class="previous {{ page_obj.has_previous|yesno:',disabled' }}"><a href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number}}{% else %}{{ page_obj.number }}{% endif %}"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                        <li class="next {{ page_obj.has_next|yesno:',disabled' }}"><a href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number}}{% else %}{{ page_obj.number }}{% endif %}">Next <span aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        
+    {% else %}{# if object_list is not paginated #}
+        <div class="row">
+            {% for album in object_list %}
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="{{ album.thumbnail_url }}" alt="Set a thumbnail, please!" />
+                        <div class="caption">
+                            <h3>{{ album.title }}</h3>
+                            <p>{{ album.description|truncatewords:25 }}</p>
+                            <p class="text-muted" title="{{ album.time_created }}"><em>{{ album.time_created|timesince }}</em></p>
+                            <p>
+                                <a href="#" class="btn btn-default" role="button">Explode</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:"3" %}
+        </div>{# close ".row" #}
+        <div class="row">
+                {% endif %}
+            {% empty %}
+            <div class="col-md-8">
+                <p>You have no albums.</p>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}{# end of if is_paginated #}
+
+{% endblock content %}

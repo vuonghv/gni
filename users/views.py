@@ -18,40 +18,20 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.conf import settings
+from django.apps import apps as django_apps
 
-from gallery.models.gniuser import GNIUser
-from gallery.forms.users import UserProfileForm, GNIUserProfileForm
+#from gallery.models.gniuser import GNIUser
+from images.models import Image
+from users.forms import UserForm, UserProfileForm
 
 
 class SignupUser(CreateView):
-    model = settings.AUTH_USER_MODEL
+    model = django_apps.get_model(settings.AUTH_USER_MODEL)
     form_class = UserCreationForm
     template_name = 'users/signup.html'
 
     def get_success_url(self):
         return reverse_lazy('users:signin')
-
-    """
-    def form_valid(self, form):
-        self.object = form.save()
-        guser = GNIUser.objects.create(user=self.object)
-        guser.save()
-
-        avatar_dir = os.path.join(settings.MEDIA_ROOT,
-                              str(self.object.id),
-                              settings.AVATAR_DIR_NAME)
-        
-        timeline_dir = os.path.join(settings.MEDIA_ROOT,
-                                str(self.object.id),
-                                settings.TIMELINE_DIR_NAME)
-        try:
-            os.makedirs(avatar_dir, mode=0o700)
-            os.makedirs(timeline_dir, mode=0o700)
-        except OSError as e:
-            print('OSError: %s' % e.strerror)
-
-        return super().form_valid(form)
-    """
 
 
 def signin(request):
@@ -62,7 +42,7 @@ def signin(request):
             user = signin_form.get_user()
             login(request, user)
             # TODO: need to change redirect in the future.
-            return HttpResponseRedirect(reverse('users:signup'))
+            return HttpResponseRedirect(reverse('users:home'))
 
     else:
         signin_form = AuthenticationForm()
@@ -73,19 +53,34 @@ def signin(request):
 @login_required
 def signout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('gallery:index'))
+    return HttpResponseRedirect(reverse('users:home'))
+
+
+class HomePage(ListView):
+    model = Image
+    context_object_name = 'images'
+    template_name = 'homepage.html'
+    paginate_by = 5
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            #return self.request.user.images.order_by('-time_created')
+            return Image.objects.filter(
+                            owner=self.request.user).order_by('-time_created')
+        return Image.objects.order_by('-time_created')
 
 
 class DetailUser(DetailView):
-    model = User
+    # TODO: Need to optimize for querying database (!!! duplicated !!!)
+    model = django_apps.get_model(settings.AUTH_USER_MODEL)
     context_object_name = 'user_obj'
-    template_name = 'user/detail_user.html'
+    template_name = 'users/detail.html'
 
 
 class UpdateProfileUser(UpdateView):
-    model = User
-    form_class = UserProfileForm
-    template_name = 'user/update_profile.html'
+    model = django_apps.get_model(settings.AUTH_USER_MODEL)
+    form_class = UserForm
+    template_name = 'users/edit.html'
     context_object_name = 'user_obj'
 
     @method_decorator(login_required)
@@ -93,8 +88,7 @@ class UpdateProfileUser(UpdateView):
         return super().dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('gallery:detail-user',
-                            kwargs={'pk': self.object.pk})
+        return reverse_lazy('users:detail', kwargs={'pk': self.object.pk})
 
     def get(self, request, *args, **kwargs):
         """
@@ -102,10 +96,10 @@ class UpdateProfileUser(UpdateView):
         associated model's data.
         """
         self.object = self.get_object()
-        form = self.get_form()
-        guser_form = GNIUserProfileForm(instance=self.object.gniuser)
-        return self.render_to_response(
-                self.get_context_data(form=form, guser_form=guser_form))
+        user_form = self.get_form()
+        profile_form = UserProfileForm(instance=self.object.profile)
+        return self.render_to_response(self.get_context_data(
+                            form=user_form, profile_form=profile_form))
 
     def post(self, request, *args, **kwargs):
         """
@@ -113,45 +107,45 @@ class UpdateProfileUser(UpdateView):
         POST adn FILES variables and the checked for validity.
         """
         self.object = self.get_object()
-        form = self.get_form()
-        guser_form = GNIUserProfileForm(instance=self.object.gniuser,
+        user_form = self.get_form()
+        profile_form = UserProfileForm(instance=self.object.profile,
                                         data=self.request.POST,
                                         files=self.request.FILES)
 
-        if form.is_valid() and guser_form.is_valid():
-            return self.form_valid(form, guser_form)
+        if user_form.is_valid() and profile_form.is_valid():
+            return self.form_valid(user_form, profile_form)
         else:
-            return self.form_invalid(form, guser_form)
+            return self.form_invalid(user_form, profile_form)
 
-    def form_valid(self, form, guser_form):
+    def form_valid(self, user_form, profile_form):
         """
         If the form is valid, and form.instance is current user,
         save the associated model and re-direct to the success_url.
         """
-        if form.instance.pk != self.request.user.pk:
-            raise PermissionDenied(
-                    'You have no permissions to edit user %s' % form.instance)
+        if user_form.instance != self.request.user:
+            raise PermissionDenied
 
-        self.object = form.save()
-        guser_form.save()
+        self.object = user_form.save()
+        profile_form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, guser_form):
+    def form_invalid(self, user_form, profile_form):
         """
         If the form is invalid, re-render the context data with the
         data-filled form and errors.
         """
-        return self.render_to_response(
-                self.get_context_data(form=form, guser_form=guser_form))
+        return self.render_to_response(self.get_context_data(
+                            form=user_form, profile_form=profile_form))
 
 
 class UserListAlbum(SingleObjectMixin, ListView):
-    template_name = 'user/list_album.html'
+    template_name = 'users/albums.html'
     context_object_name = 'user_obj'
     paginate_by = 9
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object(queryset=User.objects.all())
+        user_model = django_apps.get_model(settings.AUTH_USER_MODEL)
+        self.object = self.get_object(queryset=user_model.objects.all())
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -164,12 +158,13 @@ class UserListAlbum(SingleObjectMixin, ListView):
 
 
 class UserListImage(SingleObjectMixin, ListView):
-    template_name = 'user/list_image.html'
+    template_name = 'users/images.html'
     context_object_name = 'user_obj'
     paginate_by = 3
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object(queryset=User.objects.all())
+        user_model = django_apps.get_model(settings.AUTH_USER_MODEL)
+        self.object = self.get_object(queryset=user_model.objects.all())
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

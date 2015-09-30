@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form class="form-horizontal" id="update-profile" method="POST" enctype="multipart/form-data" action="{% url 'users:edit' user_obj.pk %}">
+    {% include 'forms/horizontal_form.html' %}
+    {% include 'forms/horizontal_form.html' with form=profile_form %}
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <button type="submit" class="btn btn-danger">Update</button>
+        </div>
+    </div>
+</form>
+
+{% endblock content %}
