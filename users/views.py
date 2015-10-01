@@ -75,8 +75,12 @@ class HomePage(ListView):
         if self.request.user.is_authenticated():
             #return self.request.user.images.order_by('-time_created')
             return Image.objects.filter(
-                            owner=self.request.user).order_by('-time_created')
-        return Image.objects.order_by('-time_created')
+                                owner=self.request.user
+                            ).order_by(
+                                '-time_created'
+                            ).prefetch_related('users_like')
+        return Image.objects.order_by('-time_created'
+                    ).prefetch_related('users_like')
 
 
 class DetailUser(DetailView):
