@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Server Error &lt;&gt; GNI{% endblock title %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p class="alert alert-danger">
+            <h2>Ooops!!! 500</h2>
+            <h4>:( Look like somthing went wrong!</h4>
+        </p>
+        <p class="text-left"><a href="{% url 'users:home' %}">Back Home</a></p>
+    </div>
+</div>
+{% endblock content %}

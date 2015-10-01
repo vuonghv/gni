@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Permissions Denied! GNI{% endblock title %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-danger">
+            <h1>403!</h1>
+            <h3>You have NO permissions to perform the actions.</h3>
+        </div>
+        <p class="text-left"><a href="{% url 'users:home' %}">Back Home</a></p>
+    </div>
+</div>
+{% endblock content %}

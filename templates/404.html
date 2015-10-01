@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Page not found - GNI{% endblock title %}
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <h1>404</h1>
+                <h3>Page not found!</h3>
+            </div>
+
+            <p class="text-left"><a href="{% url 'users:home' %}">Back Home</a></p>
+        </div>
+    </div>
+{% endblock content %}
