@@ -128,3 +128,8 @@ TIMELINE_DIR_NAME = 'timeline'
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+
+# Age (in seconds) of user's session cookie
+# when a logged in user choice remember_me
+# defautl: 2592000 (one month)
+USER_REMEMBER_AGE = 2592000

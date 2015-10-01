@@ -17,6 +17,7 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.apps import apps as django_apps
 from django.contrib import messages
+from django.contrib import messages
 
 from images.models import Image
 from users.forms import UserForm, UserProfileForm
@@ -135,6 +136,9 @@ class UpdateProfileUser(UpdateView):
 
         self.object = user_form.save()
         profile_form.save()
+        messages.success(self.request,
+                        "You've updated your profile successfully",
+                        extra_tags='alert alert-success')
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, user_form, profile_form):

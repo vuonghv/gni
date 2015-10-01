@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if messages %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2">
+            {% for msg in messages %}
+                <div class="{{ msg.tags|default:'' }}">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <p>ID: <strong>{{ user_obj.id }}</strong></p>

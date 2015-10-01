@@ -3,7 +3,9 @@ import shutil
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
+from django.contrib.auth.signals import user_logged_in
 from django.conf import settings
+from django.apps import apps as django_apps
 
 from users.models import UserProfile
 
@@ -41,3 +43,14 @@ def delete_user_profile(sender, instance, using, **kwargs):
         shutil.rmtree(user_folder)
     except (OSError, Exception) as err:
         print('Delete user\'s directory error: {}'.format(err.strerror))
+
+@receiver(user_logged_in,
+        sender=django_apps.get_model(settings.AUTH_USER_MODEL))
+def set_session_expiry(sender, request, user, **kwargs):
+    remember = request.POST.get('remember_me', False)
+    if remember:
+        request.session.set_expiry(settings.USER_REMEMBER_AGE)
+    else:
+        # The user's session cookie will expire when
+        # the user's Web Browser is closed
+        request.session.set_expiry(0)
