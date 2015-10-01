@@ -16,6 +16,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.apps import apps as django_apps
+from django.contrib import messages
 
 from images.models import Image
 from users.forms import UserForm, UserProfileForm
@@ -29,6 +30,12 @@ class SignupUser(CreateView):
     def get_success_url(self):
         return reverse_lazy('users:signin')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request, "You've Signed up successfully,\
+                        Please sign in.", extra_tags='alert alert-success')
+        return HttpResponseRedirect(self.get_success_url())
+
 
 def signin(request):
     if request.method == 'POST':
@@ -37,12 +44,18 @@ def signin(request):
         if signin_form.is_valid():
             user = signin_form.get_user()
             login(request, user)
+            prelink = request.GET.get('next', False)
+            if prelink:
+                return HttpResponseRedirect(prelink)
             return HttpResponseRedirect(reverse('users:home'))
 
     else:
         signin_form = AuthenticationForm()
 
-    return render(request, 'users/signin.html', {'form': signin_form})
+    get_param = '&'.join(['{key}={val}'.format(key=key, val=val)
+                            for key, val in request.GET.items()])
+    return render(request, 'users/signin.html',
+            {'form': signin_form, 'get_param': get_param})
 
 
 @login_required

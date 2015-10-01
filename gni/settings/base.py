@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,15 +40,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     
     # For project's apps
-    #'gallery.apps.GalleryConfig',
     'users',
     'albums',
     'images',
     'comments',
-
-    # For debug toolbar
-    'debug_toolbar',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,10 +119,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media/'
 
-LOGIN_URL = '/gni/signin'
+LOGIN_URL = '/users/login/'
 
 AVATAR_DIR_NAME = 'avatar'
 
 TIMELINE_DIR_NAME = 'timeline'
 
 AUTH_PROFILE_MODULE = 'users.UserProfile'
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
