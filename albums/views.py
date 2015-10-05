@@ -2,7 +2,10 @@ import os
 import shutil
 
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import (
+        CreateView, DeleteView, UpdateView, FormView, ModelFormMixin
+)
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -11,6 +14,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 
 from albums.models import Album
+from images.forms import ImageForm
 
 
 class ListAlbum(ListView):
@@ -107,3 +111,29 @@ class DeleteAlbum(DeleteView):
                     'You have NO permissions to delete the album')
 
         return super().delete(request, *args, **kwargs)
+
+
+class AddImage(SingleObjectMixin, FormView):
+    model = Album
+    form_class = ImageForm
+    context_object_name = 'album'
+    template_name = 'albums/add_image.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if self.object.owner != request.user:
+            raise PermissionDenied('You cannot add images to this album!')
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('albums:detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        form.instance.album = self.object
+        form.instance.owner = self.request.user
+        form.save()
+        return super().form_valid(form)

@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block static_files %}
+    {{ block.super }}
+{% endblock static_files %}
+
 {% block content %}
     {% if album %}
         <div class="row">
@@ -8,8 +12,9 @@
                 <p class="lead">{{ album.description }}</p>
                 {% if album.owner == user %}
                     <p class="text-right">
-                    <a href="{% url 'albums:edit' album.pk %}" class="text-success">Update</a>
-                        <a href="{% url 'albums:delete' album.pk %}" class="text-danger">Delete album</a>
+                    <a href="{% url 'albums:add' album.pk %}" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span> add images</a>
+                    <a href="{% url 'albums:edit' album.pk %}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> Update</a>
+                    <a href="{% url 'albums:delete' album.pk %}" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove-circle"></span> Delete</a>
                     </p>
                 {% endif %}
                 <br />
