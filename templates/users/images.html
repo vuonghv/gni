@@ -32,7 +32,9 @@
             <div class="col-md-8 col-md-offset-2">
                 <p><a href="{% url 'images:detail' image.pk %}">{{ image.title }}</a></p>
                 <p><img src="{{ image.img.url }}" height="400px" width="550px" /></p>
-                <p>{{ image.users_like.count }} like{{ image.users_like.count|pluralize }}</p>
+                {% with num_likes=image.users_like.count %}
+                <p>{{ num_likes }} like{{ num_likes|pluralize }}</p>
+                {% endwith %}
                 <br>
                 <br>
             </div>
