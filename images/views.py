@@ -12,8 +12,10 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
+from django import forms
 
 from images.models import Image
+from albums.models import Album
 from comments.forms import CommentImageForm
 
 
@@ -30,9 +32,18 @@ class CreateImage(CreateView):
         return reverse_lazy('albums:detail',
                         kwargs={'pk': self.object.album.pk})
 
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        form.fields['album'] = forms.ModelChoiceField(
+                    queryset=Album.objects.filter(owner=self.request.user),
+                    empty_label='-----------')
+        return self.render_to_response(self.get_context_data(form=form))
+
     def form_valid(self, form):
         # Should I put following checking step in another method?
-        if form.instance.album not in self.request.user.albums.all():
+        user_albums = Album.objects.filter(owner=self.request.user)
+        if not user_albums.filter(pk=form.instance.album.pk).exists(): 
             raise PermissionDenied
 
         form.instance.owner = self.request.user
@@ -43,7 +54,7 @@ class CreateImage(CreateView):
         sha512.update(bytes(str(timezone.now()), encoding='utf-8'))
 
         filename = sha512.hexdigest()
-        form.instance.img.name = filename + ext
+        form.instance.img.name = '{}{}'.format(filename, ext)
 
         return super().form_valid(form)
 
