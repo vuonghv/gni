@@ -11,8 +11,8 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
 from django import forms
+from django.contrib import messages
 
 from images.models import Image
 from albums.models import Album
@@ -37,7 +37,7 @@ class CreateImage(CreateView):
         form = self.get_form()
         form.fields['album'] = forms.ModelChoiceField(
                     queryset=Album.objects.filter(owner=self.request.user),
-                    empty_label='-----------')
+                    empty_label='Choose one')
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
@@ -55,6 +55,10 @@ class CreateImage(CreateView):
 
         filename = sha512.hexdigest()
         form.instance.img.name = '{}{}'.format(filename, ext)
+
+        self.object = form.save()
+        messages.success(self.request, 'Post Image successfully',
+                    extra_tags='alert alert-success')
 
         return super().form_valid(form)
 
@@ -175,6 +179,11 @@ class LikeImage(SingleObjectMixin, View):
     def put(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return HttpResponseRedirect(reverse('images:detail',
+                                    kwargs={'pk': self.object.pk}))
+
 
 class UnlikeImage(SingleObjectMixin, View):
     """
@@ -194,6 +203,11 @@ class UnlikeImage(SingleObjectMixin, View):
 
     def put(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return HttpResponseRedirect(reverse('images:detail',
+                                    kwargs={'pk': self.object.pk}))
 
 
 class UpdateImage(UpdateView):

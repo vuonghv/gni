@@ -21,10 +21,27 @@
             </div>
         </div>
 
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-10">
+                    {% for msg in messages %}
+                        <div class="{{ msg.tags|default:'' }}">{{ msg }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
         <div class="row">
             {% for image in images %}
                 <div class="col-md-4">
                     <a class="thumbnail" href="{% url 'images:detail' image.pk %}"><img src="{{ image.img.url }}" height="240px"/></a>
+                    <p class="hidden">
+                    <form method="POST" action="{% url 'albums:thumbnail' album.pk %}" id="thumbnail-{{ image.pk }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="image" value="{{ image.pk }}"/>
+                        </form>
+                    </p>
+                    <button class="btn btn-default btn-sm" onclick="document.getElementById('thumbnail-{{ image.pk }}').submit();">set thumbnail</button>
                 </div>
                 {% if forloop.counter|divisibleby:"3" %}
         </div>

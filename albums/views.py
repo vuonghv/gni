@@ -12,9 +12,12 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
 
 from albums.models import Album
 from images.forms import ImageForm
+from images.models import Image
 
 
 class ListAlbum(ListView):
@@ -136,4 +139,17 @@ class AddImage(SingleObjectMixin, FormView):
         form.instance.album = self.object
         form.instance.owner = self.request.user
         form.save()
+        messages.success(self.request, 'Post image successfully',
+                    extra_tags='alert alert-success')
         return super().form_valid(form)
+
+
+def set_thumbnail(request, pk):
+    if request.method == 'POST':
+        album = get_object_or_404(Album, pk=pk)
+        image = get_object_or_404(Image, pk=request.POST.get('image'))
+        album.thumbnail = image
+        album.save()
+        messages.success(request, 'Update thumbnail successfully.',
+                        extra_tags='alert alert-success')
+    return HttpResponseRedirect(reverse('albums:detail', kwargs={'pk': pk}))

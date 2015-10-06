@@ -17,7 +17,6 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.apps import apps as django_apps
 from django.contrib import messages
-from django.contrib import messages
 
 from images.models import Image
 from users.forms import UserForm, UserProfileForm
